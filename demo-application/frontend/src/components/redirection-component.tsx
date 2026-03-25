@@ -16,9 +16,11 @@
  * under the License.
  */
 
-// @ts-ignore
 import { Box } from "@oxygen-ui/react";
 
+/**
+ * Executes the RedirectionComponent operation and modify the payload if necessary.
+ */
 export const RedirectionComponent=()=>{
     return(
         <>

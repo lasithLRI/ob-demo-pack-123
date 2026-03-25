@@ -19,17 +19,12 @@
 import {type FC, type ReactNode} from "react";
 import Header from "../../components/header/header";
 
+/** ApplicationLayoutProps implementation */
 export interface ApplicationLayoutProps {
     name: string;
     children: ReactNode;
 }
 
-/**
- * @function ApplicationLayout
- * @description The highest-level wrapper component that provides the consistent
- * overall structure for the application. It renders the global `Header`
- * and contains the main content (`children`) of the current page below it.
- */
 export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children }) => {
     return (
         <>

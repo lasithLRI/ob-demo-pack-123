@@ -18,19 +18,16 @@
 
 import { IconButton } from "@oxygen-ui/react";
 import type {FC} from "react";
+
 // @ts-ignore
 import {ArrowRightFromBracketIcon} from  '@oxygen-ui/react-icons'
 import '../components.scss'
 
+/** HeaderProps implementation */
 export interface HeaderProps {
     name: string;
 }
 
-/**
- * A basic application header component that displays the application's name/title.
- * It also renders a right-aligned **Logout icon** (`ArrowRightFromBracketIcon`)
- * wrapped in an `IconButton` for user session termination or sign-out functionality.
- */
 const Header: FC<HeaderProps> = ({ name }) => {
     return(
         

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -17,37 +17,22 @@
  */
 
 /**
- * Calculates a future date by adding a specified number of days to the current date
+ * Executes the calculateNextDate operation and modify the payload if necessary.
  *
- * @param {number} daysToAdd - The number of days to add to the current date
- * @returns {string} The calculated date in ISO format (YYYY-MM-DD)
- *
- * @example
- * // If today is 2026-02-03
- * calculateNextDate(30) // Returns "2026-03-05"
- * calculateNextDate(7)  // Returns "2026-02-10"
+ * @param daysToAdd       The daysToAdd parameter
  */
 export const calculateNextDate = (daysToAdd: number): string => {
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     futureDate.setDate(currentDate.getDate() + daysToAdd);
 
-    // Format as YYYY-MM-DD using toISOString and splitting
     return futureDate.toISOString().split('T')[0];
 };
 
 /**
- * Processes standing orders by converting relative day numbers to actual dates
+ * Executes the processStandingOrders operation and modify the payload if necessary.
  *
- * @param {Array} standingOrders - Array of standing order objects with nextDate as number
- * @returns {Array} Array of standing orders with nextDate converted to date string
- *
- * @example
- * const orders = [
- *   { id: "SO-001", reference: "RENT", nextDate: 30, amount: "1000" }
- * ];
- * const processed = processStandingOrders(orders);
- * // Returns: [{ id: "SO-001", reference: "RENT", nextDate: "2026-03-05", amount: "1000" }]
+ * @param standingOrders  The standingOrders parameter
  */
 export const processStandingOrders = (standingOrders: any[]): any[] => {
     return standingOrders.map(order => ({
@@ -57,38 +42,24 @@ export const processStandingOrders = (standingOrders: any[]): any[] => {
             : order.nextDate
     }));
 };
+
 /**
- * Calculates a past date by subtracting a specified number of days from the current date
+ * Executes the calculatePastDate operation and modify the payload if necessary.
  *
- * @param {number} daysAgo - The number of days to subtract from the current date
- * @returns {string} The calculated date in ISO format (YYYY-MM-DD)
- *
- * @example
- * // If today is 2026-02-03
- * calculatePastDate(5)  // Returns "2026-01-29"
- * calculatePastDate(10) // Returns "2026-01-24"
+ * @param daysAgo         The daysAgo parameter
  */
 export const calculatePastDate = (daysAgo: number): string => {
     const currentDate = new Date();
     const pastDate = new Date(currentDate);
     pastDate.setDate(currentDate.getDate() - daysAgo);
 
-    // Format as YYYY-MM-DD using toISOString and splitting
     return pastDate.toISOString().split('T')[0];
 };
 
 /**
- * Processes transactions by converting relative day numbers to actual past dates
+ * Executes the processTransactions operation and modify the payload if necessary.
  *
- * @param {Array} transactions - Array of transaction objects with date as number
- * @returns {Array} Array of transactions with date converted to date string
- *
- * @example
- * const txns = [
- *   { id: "T001", date: 5, amount: "100.00" }
- * ];
- * const processed = processTransactions(txns);
- * // Returns: [{ id: "T001", date: "2026-01-29", amount: "100.00" }]
+ * @param transactions    The transactions parameter
  */
 export const processTransactions = (transactions: any[]): any[] => {
     return transactions.map(txn => ({
@@ -100,14 +71,9 @@ export const processTransactions = (transactions: any[]): any[] => {
 };
 
 /**
- * Processes both standing orders and transactions for all banks
+ * Executes the processAllBankDates operation and modify the payload if necessary.
  *
- * @param {Array} banks - Array of bank objects
- * @returns {Array} Array of banks with both standing orders and transactions processed
- *
- * @example
- * const config = { banks: [...] };
- * const fullyProcessed = processAllBankDates(config.banks);
+ * @param banks           The banks parameter
  */
 export const processAllBankDates = (banks: any[]): any[] => {
     return banks.map(bank => {

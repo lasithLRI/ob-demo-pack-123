@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.http;
 
 import java.io.BufferedReader;
@@ -13,21 +31,7 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
-/**
- * Fluent builder for outbound HTTPS requests made over a mutual TLS SSLContext.
- *
- * Supports GET, POST, and DELETE methods. Use the static factory methods to
- * begin
- * building a request, chain header and body setters, then call one of the
- * terminal
- * methods to execute: execute returns the response body as a String,
- * executeAndGetRedirect returns the Location header from a 3xx response, and
- * executeAndGetStatus returns the raw HTTP status code.
- *
- * Error responses (4xx, 5xx) are read from the error stream so the caller
- * always
- * receives the full response body regardless of status code.
- */
+/** HttpConnection implementation */
 public class HttpConnection {
 
     private final String url;
@@ -46,46 +50,40 @@ public class HttpConnection {
     }
 
     /**
-     * Starts building a POST request to the given URL.
+     * Executes the post operation and modify the payload if necessary.
      *
-     * @param url        the target URL.
-     * @param sslContext the mTLS context to use for the connection.
-     * @return a new HttpConnection configured for POST.
+     * @param url             The url parameter
+     * @param sslContext      The sslContext parameter
      */
     public static HttpConnection post(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "POST");
     }
 
     /**
-     * Starts building a GET request to the given URL.
+     * Executes the get operation and modify the payload if necessary.
      *
-     * @param url        the target URL.
-     * @param sslContext the mTLS context to use for the connection.
-     * @return a new HttpConnection configured for GET.
+     * @param url             The url parameter
+     * @param sslContext      The sslContext parameter
      */
     public static HttpConnection get(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "GET");
     }
 
     /**
-     * Starts building a DELETE request to the given URL.
-     * Used for consent revocation — the response body is typically empty (HTTP
-     * 204).
+     * Executes the delete operation and modify the payload if necessary.
      *
-     * @param url        the target URL.
-     * @param sslContext the mTLS context to use for the connection.
-     * @return a new HttpConnection configured for DELETE.
+     * @param url             The url parameter
+     * @param sslContext      The sslContext parameter
      */
     public static HttpConnection delete(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "DELETE");
     }
 
     /**
-     * Adds a request header. Can be chained multiple times.
+     * Executes the addHeader operation and modify the payload if necessary.
      *
-     * @param key   the header name.
-     * @param value the header value.
-     * @return this instance for chaining.
+     * @param key             The key parameter
+     * @param value           The value parameter
      */
     public HttpConnection addHeader(String key, String value) {
         this.headers.put(key, value);
@@ -93,10 +91,9 @@ public class HttpConnection {
     }
 
     /**
-     * Sets the request body. Implicitly enables output on the connection.
+     * Executes the withBody operation and modify the payload if necessary.
      *
-     * @param body the raw request body string (typically JSON or form-encoded).
-     * @return this instance for chaining.
+     * @param body            The body parameter
      */
     public HttpConnection withBody(String body) {
         this.body = body;
@@ -104,13 +101,9 @@ public class HttpConnection {
     }
 
     /**
-     * Controls whether HTTP redirects are automatically followed.
-     * Set to false when the redirect URL itself is the desired result,
-     * for example during the consent authorization redirect.
+     * Executes the followRedirects operation and modify the payload if necessary.
      *
-     * @param follow true to follow redirects (default); false to stop at the 3xx
-     *               response.
-     * @return this instance for chaining.
+     * @param follow          The follow parameter
      */
     public HttpConnection followRedirects(boolean follow) {
         this.followRedirects = follow;
@@ -118,12 +111,9 @@ public class HttpConnection {
     }
 
     /**
-     * Executes the request and returns the full response body as a String.
-     * Both success (2xx) and error (4xx/5xx) bodies are returned — the caller
-     * is responsible for interpreting the content.
+     * Executes the execute operation and modify the payload if necessary.
      *
-     * @return the response body string.
-     * @throws IOException if the connection or I/O fails.
+     * @throws IOException    When an error occurs during the operation
      */
     public String execute() throws IOException {
         HttpsURLConnection connection = createConnection();
@@ -134,15 +124,9 @@ public class HttpConnection {
     }
 
     /**
-     * Executes the request and returns the Location header from a 3xx redirect
-     * response.
-     * Intended for use with the consent authorization endpoint, which redirects to
-     * the
-     * identity server's login page.
+     * Executes the executeAndGetRedirect operation and modify the payload if necessary.
      *
-     * @return the redirect URL from the Location header.
-     * @throws IOException if the response is not a redirect or the Location header
-     *                     is absent.
+     * @throws IOException    When an error occurs during the operation
      */
     public String executeAndGetRedirect() throws IOException {
         HttpsURLConnection connection = createConnection();
@@ -157,12 +141,9 @@ public class HttpConnection {
     }
 
     /**
-     * Executes the request and returns only the HTTP status code.
-     * Intended for DELETE operations such as consent revocation where the response
-     * body is empty and only the status matters.
+     * Executes the executeAndGetStatus operation and modify the payload if necessary.
      *
-     * @return the HTTP status code (e.g. 204 for successful deletion).
-     * @throws IOException if the connection or I/O fails.
+     * @throws IOException    When an error occurs during the operation
      */
     public int executeAndGetStatus() throws IOException {
         HttpsURLConnection connection = createConnection();
@@ -183,14 +164,9 @@ public class HttpConnection {
     }
 
     /**
-     * Opens and configures the underlying HttpsURLConnection from the current
-     * builder state.
-     * Applies the SSLSocketFactory, request method, redirect policy, and all
-     * headers.
+     * Executes the createConnection operation and modify the payload if necessary.
      *
-     * @return a configured HttpsURLConnection ready for use.
-     * @throws IOException if the URL is malformed or the connection cannot be
-     *                     opened.
+     * @throws IOException    When an error occurs during the operation
      */
     private HttpsURLConnection createConnection() throws IOException {
         URL urlObj = new URL(url);
@@ -209,11 +185,10 @@ public class HttpConnection {
     }
 
     /**
-     * Writes the request body to the connection's output stream using UTF-8
-     * encoding.
+     * Executes the writeBody operation and modify the payload if necessary.
      *
-     * @param connection the open HttpsURLConnection to write the body to.
-     * @throws IOException if the output stream cannot be written to.
+     * @param connection      The connection parameter
+     * @throws IOException    When an error occurs during the operation
      */
     private void writeBody(HttpsURLConnection connection) throws IOException {
         if (body == null) {
@@ -226,12 +201,10 @@ public class HttpConnection {
     }
 
     /**
-     * Reads the full response body from either the input stream (2xx) or the error
-     * stream (4xx/5xx), so the caller always receives the complete server response.
+     * Executes the readResponse operation and modify the payload if necessary.
      *
-     * @param connection the open HttpsURLConnection to read the response from.
-     * @return the full response body as a String.
-     * @throws IOException if the response stream cannot be read.
+     * @param connection      The connection parameter
+     * @throws IOException    When an error occurs during the operation
      */
     private String readResponse(HttpsURLConnection connection) throws IOException {
         int responseCode = connection.getResponseCode();

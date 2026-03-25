@@ -1,13 +1,27 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.services;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/**
- * Represents the payload of a JWT request object used in the Open Banking
- * authorization flow, carrying consent ID, scope, and OIDC claims.
- * Use the nested Builder to construct instances.
- */
+/** RequestObjectPayload implementation */
 public class RequestObjectPayload {
 
     private static final String FIELD_ESSENTIAL = "essential";
@@ -38,9 +52,7 @@ public class RequestObjectPayload {
         this.consentId = builder.consentId;
     }
 
-    /**
-     * Fluent builder for RequestObjectPayload.
-     */
+    /** Builder implementation */
     public static class Builder {
 
         String iss;
@@ -54,60 +66,108 @@ public class RequestObjectPayload {
         private String scope;
         private String consentId;
 
+        /**
+         * Executes the iss operation and modify the payload if necessary.
+         *
+         * @param iss             The iss parameter
+         */
         public Builder iss(String iss) {
             this.iss = iss;
             return this;
         }
 
+        /**
+         * Executes the responseType operation and modify the payload if necessary.
+         *
+         * @param responseType    The responseType parameter
+         */
         public Builder responseType(String responseType) {
             this.responseType = responseType;
             return this;
         }
 
+        /**
+         * Executes the redirectUri operation and modify the payload if necessary.
+         *
+         * @param redirectUri     The redirectUri parameter
+         */
         public Builder redirectUri(String redirectUri) {
             this.redirectUri = redirectUri;
             return this;
         }
 
+        /**
+         * Executes the state operation and modify the payload if necessary.
+         *
+         * @param state           The state parameter
+         */
         public Builder state(String state) {
             this.state = state;
             return this;
         }
 
+        /**
+         * Executes the nonce operation and modify the payload if necessary.
+         *
+         * @param nonce           The nonce parameter
+         */
         public Builder nonce(String nonce) {
             this.nonce = nonce;
             return this;
         }
 
+        /**
+         * Executes the aud operation and modify the payload if necessary.
+         *
+         * @param aud             The aud parameter
+         */
         public Builder aud(String aud) {
             this.aud = aud;
             return this;
         }
 
+        /**
+         * Executes the nbf operation and modify the payload if necessary.
+         *
+         * @param nbf             The nbf parameter
+         */
         public Builder nbf(long nbf) {
             this.nbf = nbf;
             return this;
         }
 
+        /**
+         * Executes the exp operation and modify the payload if necessary.
+         *
+         * @param exp             The exp parameter
+         */
         public Builder exp(long exp) {
             this.exp = exp;
             return this;
         }
 
+        /**
+         * Executes the scope operation and modify the payload if necessary.
+         *
+         * @param scope           The scope parameter
+         */
         public Builder scope(String scope) {
             this.scope = scope;
             return this;
         }
 
+        /**
+         * Executes the consentId operation and modify the payload if necessary.
+         *
+         * @param consentId       The consentId parameter
+         */
         public Builder consentId(String consentId) {
             this.consentId = consentId;
             return this;
         }
 
         /**
-         * Builds and returns a RequestObjectPayload from the current builder state.
-         *
-         * @return a fully constructed RequestObjectPayload instance.
+         * Executes the build operation and modify the payload if necessary.
          */
         public RequestObjectPayload build() {
             return new RequestObjectPayload(this);
@@ -115,12 +175,7 @@ public class RequestObjectPayload {
     }
 
     /**
-     * Serializes the payload to a JSON string, including the nested OIDC claims
-     * structure required by the Open Banking authorization request specification.
-     * The claims object contains id_token and userinfo blocks, each carrying
-     * the openbanking_intent_id and ACR values marked as essential.
-     *
-     * @return the serialized JWT payload as a JSON string.
+     * Executes the toJson operation and modify the payload if necessary.
      */
     public String toJson() {
         JSONObject intentId = new JSONObject()

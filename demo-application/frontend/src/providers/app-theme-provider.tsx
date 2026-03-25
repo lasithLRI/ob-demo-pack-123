@@ -19,26 +19,22 @@
 import {ThemeProvider, extendTheme} from '@oxygen-ui/react';
 import type {CustomColors} from "../hooks/config-interfaces.ts";
 
-
-/**
- * A root-level React Provider component designed to apply the custom WSO2 Oxygen UI theme
- * to an application.
- *
- * It uses Oxygen UI's `extendTheme` utility to:
- * 1. Set the global typography font family to 'Inter'.
- * 2. Define distinct 'light' and 'dark' color schemes with specific palette customizations,
- * such as the primary main color and various background and font colors for the 'light' mode.
- *
- * This theme is then provided to the component tree via the Oxygen UI's `ThemeProvider`,
- * allowing all descendant components to access the custom design tokens.
- */
-
+/** ApplicationThemeProviderProps implementation */
 interface ApplicationThemeProviderProps {
     children?: React.ReactNode;
     color?: CustomColors[];
 }
 
+/**
+ * Executes the AppThemeProvider operation and modify the payload if necessary.
+ *
+ * @param children        The children parameter
+ * @param color           The color parameter
+ */
 const AppThemeProvider = ({children,color}:ApplicationThemeProviderProps) => {
+    /**
+     * Executes the customColors operation and modify the payload if necessary.
+     */
     const customColors = (color || []).reduce((acc, currentObject) => {
         return { ...acc, ...currentObject };
     }, {});

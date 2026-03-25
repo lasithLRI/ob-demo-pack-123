@@ -1,14 +1,28 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Loads and provides access to application configuration properties
- * from the application.properties file on the classpath.
- * This class is not instantiable.
- */
+/** ConfigLoader implementation */
 public class ConfigLoader {
 
     private static final Properties prop = new Properties();
@@ -26,11 +40,9 @@ public class ConfigLoader {
     }
 
     /**
-     * Returns the value of the specified property key.
+     * Executes the getProperty operation and modify the payload if necessary.
      *
-     * @param key the property key to look up
-     * @return the property value
-     * @throws RuntimeException if the property key is not found
+     * @param key             The key parameter
      */
     public static String getProperty(String key) {
         String value = prop.getProperty(key);
@@ -41,244 +53,193 @@ public class ConfigLoader {
     }
 
     /**
-     * Returns the value of the specified property key, or a default value if not found.
+     * Executes the getProperty operation and modify the payload if necessary.
      *
-     * @param key          the property key to look up
-     * @param defaultValue the value to return if the key is not found
-     * @return the property value or the default value
+     * @param key             The key parameter
+     * @param defaultValue    The defaultValue parameter
      */
     public static String getProperty(String key, String defaultValue) {
         return prop.getProperty(key, defaultValue);
     }
 
     /**
-     * Returns the OAuth client ID.
-     *
-     * @return the OAuth client ID
+     * Executes the getClientId operation and modify the payload if necessary.
      */
     public static String getClientId() {
         return getProperty("oauth.client.id");
     }
 
     /**
-     * Returns the OAuth client key ID (kid).
-     *
-     * @return the OAuth client kid
+     * Executes the getClientKid operation and modify the payload if necessary.
      */
     public static String getClientKid() {
         return getProperty("oauth.client.kid");
     }
 
     /**
-     * Returns the OAuth signing algorithm.
-     *
-     * @return the OAuth algorithm
+     * Executes the getOAuthAlgorithm operation and modify the payload if necessary.
      */
     public static String getOAuthAlgorithm() {
         return getProperty("oauth.algorithm");
     }
 
     /**
-     * Returns the OAuth token type.
-     *
-     * @return the OAuth token type
+     * Executes the getTokenType operation and modify the payload if necessary.
      */
     public static String getTokenType() {
         return getProperty("oauth.token.type");
     }
 
     /**
-     * Returns the OAuth token endpoint URL.
-     *
-     * @return the token URL
+     * Executes the getTokenUrl operation and modify the payload if necessary.
      */
     public static String getTokenUrl() {
         return getProperty("oauth.token.url");
     }
 
     /**
-     * Returns the OAuth authorization endpoint URL.
-     *
-     * @return the authorize URL
+     * Executes the getAuthorizeUrl operation and modify the payload if necessary.
      */
     public static String getAuthorizeUrl() {
         return getProperty("oauth.authorize.url");
     }
 
     /**
-     * Returns the OAuth redirect URI.
-     *
-     * @return the redirect URI
+     * Executes the getRedirectUri operation and modify the payload if necessary.
      */
     public static String getRedirectUri() {
         return getProperty("oauth.redirect.uri");
     }
 
     /**
-     * Returns the OAuth state parameter.
-     *
-     * @return the OAuth state
+     * Executes the getOAuthState operation and modify the payload if necessary.
      */
     public static String getOAuthState() {
         return getProperty("oauth.state");
     }
 
     /**
-     * Returns the OAuth nonce parameter.
-     *
-     * @return the OAuth nonce
+     * Executes the getOAuthNonce operation and modify the payload if necessary.
      */
     public static String getOAuthNonce() {
         return getProperty("oauth.nonce");
     }
 
     /**
-     * Returns the OAuth prompt parameter.
-     *
-     * @return the OAuth prompt
+     * Executes the getOAuthPrompt operation and modify the payload if necessary.
      */
     public static String getOAuthPrompt() {
         return getProperty("oauth.prompt");
     }
 
     /**
-     * Returns the OAuth response type.
-     *
-     * @return the OAuth response type
+     * Executes the getResponseType operation and modify the payload if necessary.
      */
     public static String getResponseType() {
         return getProperty("oauth.response.type");
     }
 
     /**
-     * Returns the base URL for the open banking account API.
-     *
-     * @return the account base URL
+     * Executes the getAccountBaseUrl operation and modify the payload if necessary.
      */
     public static String getAccountBaseUrl() {
         return getProperty("openbanking.account.base.url");
     }
 
     /**
-     * Returns the base URL for the open banking payment API.
-     *
-     * @return the payment base URL
+     * Executes the getPaymentBaseUrl operation and modify the payload if necessary.
      */
     public static String getPaymentBaseUrl() {
         return getProperty("openbanking.payment.base.url");
     }
 
     /**
-     * Returns the FAPI financial ID used in open banking API requests.
-     *
-     * @return the FAPI financial ID
+     * Executes the getFapiFinancialId operation and modify the payload if necessary.
      */
     public static String getFapiFinancialId() {
         return getProperty("openbanking.fapi.financial.id");
     }
 
     /**
-     * Returns the file path to the SSL client certificate.
-     *
-     * @return the certificate path
+     * Executes the getCertificatePath operation and modify the payload if necessary.
      */
     public static String getCertificatePath() {
         return getProperty("ssl.certificate.path");
     }
 
     /**
-     * Returns the file path to the SSL private key.
-     *
-     * @return the key path
+     * Executes the getKeyPath operation and modify the payload if necessary.
      */
     public static String getKeyPath() {
         return getProperty("ssl.key.path");
     }
 
     /**
-     * Returns the file path to the SSL truststore.
-     *
-     * @return the truststore path
+     * Executes the getTruststorePath operation and modify the payload if necessary.
      */
     public static String getTruststorePath() {
         return getProperty("ssl.truststore.path");
     }
 
     /**
-     * Returns the password for the SSL truststore.
-     *
-     * @return the truststore password
+     * Executes the getTruststorePassword operation and modify the payload if necessary.
      */
     public static String getTruststorePassword() {
         return getProperty("ssl.truststore.password");
     }
 
     /**
-     * Returns the frontend home URL used for post-authorization redirects.
-     *
-     * @return the frontend home URL
+     * Executes the getFrontendHomeUrl operation and modify the payload if necessary.
      */
     public static String getFrontendHomeUrl() {
         return getProperty("frontend.home.url");
     }
 
     /**
-     * Returns the base URL of this backend application, used in the OAuth redirect page
-     * to call /processAuth after the bank redirects the user back.
-     * Includes the context path and JAX-RS root segment with no trailing slash.
-     * Example: https://tpp.local.ob/ob_demo_backend_war/init
-     *
-     * @return the backend base URL
+     * Executes the getBackendBaseUrl operation and modify the payload if necessary.
      */
     public static String getBackendBaseUrl() {
         return getProperty("backend.base.url");
     }
 
     /**
-     * Returns the display name of the mock bank.
-     *
-     * @return the mock bank name
+     * Executes the getMockBankName operation and modify the payload if necessary.
      */
     public static String getMockBankName() {
         return getProperty("mock.bank.name");
     }
 
     /**
-     * Returns the logo URL or path for the mock bank.
-     *
-     * @return the mock bank logo
+     * Executes the getMockBankLogo operation and modify the payload if necessary.
      */
     public static String getMockBankLogo() {
         return getProperty("mock.bank.logo");
     }
 
     /**
-     * Returns the primary color for the mock bank's branding.
-     *
-     * @return the mock bank primary color
+     * Executes the getMockBankPrimaryColor operation and modify the payload if necessary.
      */
     public static String getMockBankPrimaryColor() {
         return getProperty("mock.bank.color.primary");
     }
 
     /**
-     * Returns the secondary color for the mock bank's branding.
-     *
-     * @return the mock bank secondary color
+     * Executes the getMockBankSecondaryColor operation and modify the payload if necessary.
      */
     public static String getMockBankSecondaryColor() {
         return getProperty("mock.bank.color.secondary");
     }
 
     /**
-     * Returns the allowed origin for CORS configuration.
-     *
-     * @return the CORS allowed origin
+     * Executes the getCorsAllowedOrigin operation and modify the payload if necessary.
      */
     public static String getCorsAllowedOrigin() {
         return getProperty("cors.allowed.origin");
     }
 
+    /**
+     * Executes the getIsBaseUrl operation and modify the payload if necessary.
+     */
     public static String getIsBaseUrl(){
         return getProperty("is.base.url");
     }

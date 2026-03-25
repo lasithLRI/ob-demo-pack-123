@@ -1,12 +1,26 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * Represents a standing order associated with a bank account,
- * including its schedule, amount, currency, and current status.
- * Unknown JSON properties are ignored during deserialization.
- */
+/** StandingOrder implementation */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StandingOrder {
     private String id;
@@ -18,24 +32,9 @@ public class StandingOrder {
     private String amount;
     private String currency;
 
-    /**
-     * Constructs an empty StandingOrder instance.
-     */
     public StandingOrder() {
     }
 
-    /**
-     * Constructs a StandingOrder with all required details.
-     *
-     * @param id        the unique identifier of the standing order
-     * @param reference the payment reference or description for the standing order
-     * @param bank      the name of the bank associated with the standing order
-     * @param account   the account number the standing order is linked to
-     * @param nextDate  the date of the next scheduled payment
-     * @param status    the current status of the standing order
-     * @param amount    the amount to be transferred on each execution
-     * @param currency  the currency code for the standing order
-     */
     public StandingOrder(String id, String reference,
                          String bank, String account,
                          String nextDate, String status,
@@ -51,144 +50,128 @@ public class StandingOrder {
     }
 
     /**
-     * Returns the unique identifier of the standing order.
-     *
-     * @return the standing order ID
+     * Executes the getId operation and modify the payload if necessary.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Sets the unique identifier of the standing order.
+     * Executes the setId operation and modify the payload if necessary.
      *
-     * @param id the standing order ID to set
+     * @param id              The id parameter
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * Returns the payment reference or description for the standing order.
-     *
-     * @return the payment reference
+     * Executes the getReference operation and modify the payload if necessary.
      */
     public String getReference() {
         return reference;
     }
 
     /**
-     * Sets the payment reference or description for the standing order.
+     * Executes the setReference operation and modify the payload if necessary.
      *
-     * @param reference the payment reference to set
+     * @param reference       The reference parameter
      */
     public void setReference(String reference) {
         this.reference = reference;
     }
 
     /**
-     * Returns the name of the bank associated with the standing order.
-     *
-     * @return the bank name
+     * Executes the getBank operation and modify the payload if necessary.
      */
     public String getBank() {
         return bank;
     }
 
     /**
-     * Sets the name of the bank associated with the standing order.
+     * Executes the setBank operation and modify the payload if necessary.
      *
-     * @param bank the bank name to set
+     * @param bank            The bank parameter
      */
     public void setBank(String bank) {
         this.bank = bank;
     }
 
     /**
-     * Returns the account number the standing order is linked to.
-     *
-     * @return the account number
+     * Executes the getAccount operation and modify the payload if necessary.
      */
     public String getAccount() {
         return account;
     }
 
     /**
-     * Sets the account number the standing order is linked to.
+     * Executes the setAccount operation and modify the payload if necessary.
      *
-     * @param account the account number to set
+     * @param account         The account parameter
      */
     public void setAccount(String account) {
         this.account = account;
     }
 
     /**
-     * Returns the date of the next scheduled payment.
-     *
-     * @return the next payment date
+     * Executes the getNextDate operation and modify the payload if necessary.
      */
     public String getNextDate() {
         return nextDate;
     }
 
     /**
-     * Sets the date of the next scheduled payment.
+     * Executes the setNextDate operation and modify the payload if necessary.
      *
-     * @param nextDate the next payment date to set
+     * @param nextDate        The nextDate parameter
      */
     public void setNextDate(String nextDate) {
         this.nextDate = nextDate;
     }
 
     /**
-     * Returns the current status of the standing order.
-     *
-     * @return the standing order status
+     * Executes the getStatus operation and modify the payload if necessary.
      */
     public String getStatus() {
         return status;
     }
 
     /**
-     * Sets the current status of the standing order.
+     * Executes the setStatus operation and modify the payload if necessary.
      *
-     * @param status the standing order status to set
+     * @param status          The status parameter
      */
     public void setStatus(String status) {
         this.status = status;
     }
 
     /**
-     * Returns the amount to be transferred on each execution.
-     *
-     * @return the payment amount
+     * Executes the getAmount operation and modify the payload if necessary.
      */
     public String getAmount() {
         return amount;
     }
 
     /**
-     * Sets the amount to be transferred on each execution.
+     * Executes the setAmount operation and modify the payload if necessary.
      *
-     * @param amount the payment amount to set
+     * @param amount          The amount parameter
      */
     public void setAmount(String amount) {
         this.amount = amount;
     }
 
     /**
-     * Returns the currency code for the standing order.
-     *
-     * @return the currency code
+     * Executes the getCurrency operation and modify the payload if necessary.
      */
     public String getCurrency() {
         return currency;
     }
 
     /**
-     * Sets the currency code for the standing order.
+     * Executes the setCurrency operation and modify the payload if necessary.
      *
-     * @param currency the currency code to set
+     * @param currency        The currency parameter
      */
     public void setCurrency(String currency) {
         this.currency = currency;

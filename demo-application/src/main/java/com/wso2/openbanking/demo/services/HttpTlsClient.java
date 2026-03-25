@@ -1,5 +1,22 @@
-package com.wso2.openbanking.demo.services;
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
+package com.wso2.openbanking.demo.services;
 
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.http.AuthUrlBuilder;
@@ -14,28 +31,7 @@ import java.util.UUID;
 
 import javax.net.ssl.SSLContext;
 
-/**
- * HTTP client for all outbound Open Banking API calls made over mutual TLS (mTLS).
- *
- * Each method targets a specific Open Banking endpoint type and applies the correct
- * headers and authentication for that call. The underlying SSLContext is initialized
- * once at construction time from the provided certificate, key, and truststore material
- * and reused across all requests.
- *
- * All request headers, request bodies, and response bodies are logged at INFO level
- * via SLF4J. Bearer tokens are truncated to the first 20 characters in log output to
- * prevent accidental credential leakage.
- *
- * Supported operations:
- * JWT form post for client assertion token requests,
- * access token exchange for authorization code grant,
- * account consent initiation (AISP consent POST),
- * consent authorization redirect (authorization endpoint GET),
- * authenticated resource GET for accounts, balances, and transactions,
- * payment consent initiation (PISP consent POST with idempotency key),
- * payment submission (PISP payment POST with idempotency key),
- * and consent revocation (DELETE for account access consent).
- */
+/** HttpTlsClient implementation */
 public final class HttpTlsClient {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpTlsClient.class);
@@ -52,20 +48,10 @@ public final class HttpTlsClient {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    /** Number of characters of the Bearer token shown in logs before truncation. */
     private static final int TOKEN_LOG_PREFIX_LENGTH = 20;
 
     private final SSLContext sslContext;
 
-    /**
-     * Creates a new HttpTlsClient and initializes the mTLS SSLContext.
-     *
-     * @param certPath           path to the client certificate (PEM or PKCS12).
-     * @param keyPath            path to the client private key.
-     * @param trustStorePath     path to the truststore containing the server CA.
-     * @param trustStorePassword password for the truststore.
-     * @throws SSLContextCreationException if the SSL context cannot be initialized.
-     */
     public HttpTlsClient(String certPath, String keyPath,
                          String trustStorePath, String trustStorePassword)
             throws SSLContextCreationException {
@@ -73,14 +59,11 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Posts a signed JWT client assertion as a form-encoded body to the token endpoint.
-     * Used for client_credentials grant requests where the client authenticates
-     * using a private key JWT.
+     * Executes the postJwt operation and modify the payload if necessary.
      *
-     * @param url  the token endpoint URL.
-     * @param body URL-encoded form body containing the JWT and grant parameters.
-     * @return the raw JSON token response string.
-     * @throws IOException if the HTTP call fails.
+     * @param url             The url parameter
+     * @param body            The body parameter
+     * @throws IOException    When an error occurs during the operation
      */
     public String postJwt(String url, String body) throws IOException {
         return HttpConnection.post(url, sslContext)
@@ -91,13 +74,11 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Posts an authorization code exchange request to the token endpoint.
-     * Used during the OAuth callback to swap an authorization code for an access token.
+     * Executes the postAccessToken operation and modify the payload if necessary.
      *
-     * @param url  the token endpoint URL.
-     * @param body URL-encoded form body containing the authorization code and grant parameters.
-     * @return the raw JSON token response string.
-     * @throws IOException if the HTTP call fails.
+     * @param url             The url parameter
+     * @param body            The body parameter
+     * @throws IOException    When an error occurs during the operation
      */
     public String postAccessToken(String url, String body) throws IOException {
         return HttpConnection.post(url, sslContext)
@@ -108,16 +89,12 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Posts an account access consent initiation request to the AISP consent endpoint.
-     * The consent body specifies the permissions and date range being requested.
-     * No idempotency key is required for account consent initiation.
-     * Logs the outbound request and inbound response at INFO level.
+     * Executes the postConsentInit operation and modify the payload if necessary.
      *
-     * @param url   the account-access-consents endpoint URL.
-     * @param body  JSON consent request body.
-     * @param token Bearer access token with accounts scope.
-     * @return the raw JSON consent response containing the ConsentId.
-     * @throws IOException if the HTTP call fails.
+     * @param url             The url parameter
+     * @param body            The body parameter
+     * @param token           The token parameter
+     * @throws IOException    When an error occurs during the operation
      */
     public String postConsentInit(String url, String body, String token) throws IOException {
         String fapiId = ConfigLoader.getFapiFinancialId();
@@ -162,17 +139,6 @@ public final class HttpTlsClient {
         return response;
     }
 
-    /**
-     * Sends the signed consent authorization request to the authorization endpoint.
-     * Redirects are intentionally not followed — the Location header from the 302 response
-     * is returned directly so the caller can pass the authorization URL back to the user.
-     *
-     * @param requestObjectJwt signed JWT request object containing the consent ID and claims.
-     * @param clientId         the OAuth client ID of this application.
-     * @param scope            the requested OAuth scope (e.g. "accounts openid").
-     * @return the redirect URL the user must visit to approve the consent.
-     * @throws IOException if the HTTP call fails.
-     */
     public String postConsentAuthRequest(String requestObjectJwt, String clientId, String scope)
             throws IOException {
         String authUrl = AuthUrlBuilder.build(requestObjectJwt, clientId, scope);
@@ -182,14 +148,11 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Performs an authenticated GET request to an Open Banking AISP resource endpoint.
-     * Used to fetch accounts, balances, and transactions after consent has been granted.
-     * Logs the outbound request headers (token truncated) and the full inbound response body.
+     * Executes the getWithAuth operation and modify the payload if necessary.
      *
-     * @param url   the fully-qualified resource URL (accounts, balances, transactions).
-     * @param token Bearer access token with accounts scope.
-     * @return the raw JSON response body.
-     * @throws IOException if the HTTP call fails.
+     * @param url             The url parameter
+     * @param token           The token parameter
+     * @throws IOException    When an error occurs during the operation
      */
     public String getWithAuth(String url, String token) throws IOException {
         String fapiId = ConfigLoader.getFapiFinancialId();
@@ -235,18 +198,12 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Posts a payment consent initiation request to the PISP consent endpoint.
-     * A fresh x-idempotency-key (UUID) is generated for every call, satisfying the Open Banking
-     * requirement that each consent initiation is uniquely identified. The key is included
-     * in the log output so it can be correlated with the bank's records if a dispute arises.
-     * Logs the outbound request headers, idempotency key, and full request body,
-     * as well as the full inbound response body.
+     * Executes the postPaymentConsentInit operation and modify the payload if necessary.
      *
-     * @param url   the payment-consents endpoint URL.
-     * @param body  JSON payment consent request body.
-     * @param token Bearer access token with payments scope.
-     * @return the raw JSON consent response containing the ConsentId.
-     * @throws IOException if the HTTP call fails.
+     * @param url             The url parameter
+     * @param body            The body parameter
+     * @param token           The token parameter
+     * @throws IOException    When an error occurs during the operation
      */
     public String postPaymentConsentInit(String url, String body, String token) throws IOException {
         String idempotencyKey = UUID.randomUUID().toString();
@@ -296,19 +253,12 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Posts a payment submission request to the PISP payments endpoint.
-     * Called after the user has approved the payment consent via the authorization flow.
-     * A fresh x-idempotency-key is generated and included, as required by the Open Banking
-     * specification for all PISP POST endpoints.
-     * Logs the outbound request headers, idempotency key, and full request body,
-     * as well as the full inbound response body.
+     * Executes the postPayments operation and modify the payload if necessary.
      *
-     * @param url   the payments endpoint URL.
-     * @param body  JSON payment submission body.
-     * @param token Bearer user access token with payments scope, obtained from the
-     *              authorization code exchange after user consent.
-     * @return the raw JSON payment submission response.
-     * @throws IOException if the HTTP call fails.
+     * @param url             The url parameter
+     * @param body            The body parameter
+     * @param token           The token parameter
+     * @throws IOException    When an error occurs during the operation
      */
     public String postPayments(String url, String body, String token) throws IOException {
         String idempotencyKey = UUID.randomUUID().toString();
@@ -361,16 +311,11 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Sends an authenticated DELETE request to revoke an account access consent.
-     * The Open Banking specification mandates HTTP 204 (No Content) for a successful
-     * revocation. This method returns true for any 2xx status code to handle servers
-     * that return 200 OK instead.
+     * Executes the deleteWithAuth operation and modify the payload if necessary.
      *
-     * @param url   the fully-qualified consent revocation URL
-     *              (e.g. /account-access-consents/{consentId}).
-     * @param token Bearer access token with accounts scope.
-     * @return true if the bank responded with a 2xx status, false otherwise.
-     * @throws IOException if the HTTP call fails.
+     * @param url             The url parameter
+     * @param token           The token parameter
+     * @throws IOException    When an error occurs during the operation
      */
     public boolean deleteWithAuth(String url, String token) throws IOException {
         String fapiId = ConfigLoader.getFapiFinancialId();
@@ -412,11 +357,9 @@ public final class HttpTlsClient {
     }
 
     /**
-     * Returns the first 20 characters of a Bearer token for safe inclusion in log output.
-     * Prevents full credentials from appearing in logs.
+     * Executes the truncateToken operation and modify the payload if necessary.
      *
-     * @param token the raw Bearer token value.
-     * @return truncated token string, or the original if shorter than 20 characters.
+     * @param token           The token parameter
      */
     private String truncateToken(String token) {
         if (token == null) {
@@ -426,6 +369,5 @@ public final class HttpTlsClient {
                 ? token.substring(0, TOKEN_LOG_PREFIX_LENGTH)
                 : token;
     }
-
 
 }

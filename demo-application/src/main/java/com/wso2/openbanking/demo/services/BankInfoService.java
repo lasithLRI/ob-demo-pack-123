@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,7 +32,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/** BankInfoService implementation */
 public class BankInfoService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -22,22 +40,15 @@ public class BankInfoService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private List<Bank> banks;
-    private String name;
-    private String image;
-    private String background;
-    private String route;
-    private String applicationName;
+
     private List<Payee> payees;
     private final List<String> currencies = new ArrayList<>(Arrays.asList("USD", "EURO", "GBP"));
     private AddAccountBankInfo addAccountBankInfo;
 
-    public BankInfoService() {
-        // No initialization required: all fields are populated lazily via loadBanks()
-    }
-
     /**
-     * Reads config.json and populates all service state.
-     * Subsequent calls are no-ops if banks are already loaded.
+     * Executes the loadBanks operation and modify the payload if necessary.
+     *
+     * @throws BankInfoLoadException When an error occurs during the operation
      */
     public void loadBanks() throws BankInfoLoadException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
@@ -47,8 +58,6 @@ public class BankInfoService {
             if (this.banks == null) {
                 JsonNode rootNode = objectMapper.readTree(inputStream);
                 loadBanksFromJson(rootNode);
-                loadUserInfo(rootNode);
-                loadApplicationInfo(rootNode);
                 loadPayees(rootNode);
                 loadAddAccountInfo(rootNode);
                 loadMockBankFromProperties();
@@ -58,7 +67,12 @@ public class BankInfoService {
         }
     }
 
-    /** Deserializes the banks array, then triggers date conversion and sorting. */
+    /**
+     * Executes the loadBanksFromJson operation and modify the payload if necessary.
+     *
+     * @param rootNode        The rootNode parameter
+     * @throws BankInfoLoadException When an error occurs during the operation
+     */
     private void loadBanksFromJson(JsonNode rootNode) throws BankInfoLoadException {
         JsonNode banksNode = rootNode.get("banks");
         if (banksNode != null && banksNode.isArray()) {
@@ -75,7 +89,9 @@ public class BankInfoService {
         }
     }
 
-    /** Converts relative day offsets in transaction and standing order dates to absolute date strings. */
+    /**
+     * Executes the convertDateOffsets operation and modify the payload if necessary.
+     */
     private void convertDateOffsets() {
         LocalDate today = LocalDate.now();
         for (Bank bank : this.banks) {
@@ -87,7 +103,12 @@ public class BankInfoService {
         }
     }
 
-    /** Converts transaction dates that are stored as integer day offsets (e.g. "30" → 30 days ago). */
+    /**
+     * Executes the convertTransactionDates operation and modify the payload if necessary.
+     *
+     * @param account         The account parameter
+     * @param today           The today parameter
+     */
     private void convertTransactionDates(Account account, LocalDate today) {
         if (account.getTransactions() == null) return;
         for (Transaction transaction : account.getTransactions()) {
@@ -97,12 +118,17 @@ public class BankInfoService {
                 int daysAgo = Integer.parseInt(dateValue);
                 transaction.setDate(today.minusDays(daysAgo).format(DATE_FORMATTER));
             } catch (NumberFormatException e) {
-                // dateValue is already a formatted date string (e.g. "2024-03-15") — no conversion needed
+                
             }
         }
     }
 
-    /** Converts standing order next-dates that are stored as integer day offsets (e.g. "7" → 7 days from now). */
+    /**
+     * Executes the convertStandingOrderDates operation and modify the payload if necessary.
+     *
+     * @param account         The account parameter
+     * @param today           The today parameter
+     */
     private void convertStandingOrderDates(Account account, LocalDate today) {
         if (account.getStandingOrders() == null) return;
         for (StandingOrder order : account.getStandingOrders()) {
@@ -112,12 +138,14 @@ public class BankInfoService {
                 int daysFromNow = Integer.parseInt(nextDateValue);
                 order.setNextDate(today.plusDays(daysFromNow).format(DATE_FORMATTER));
             } catch (NumberFormatException e) {
-                // nextDateValue is already a formatted date string (e.g. "2024-03-15") — no conversion needed
+                
             }
         }
     }
 
-    /** Sorts transactions across all accounts by date, most recent first. */
+    /**
+     * Executes the sortTransactionsByDate operation and modify the payload if necessary.
+     */
     private void sortTransactionsByDate() {
         for (Bank bank : this.banks) {
             if (bank.getAccounts() == null) continue;
@@ -129,26 +157,11 @@ public class BankInfoService {
         }
     }
 
-    /** Loads user profile fields — name, avatar image, and background. */
-    private void loadUserInfo(JsonNode rootNode) {
-        JsonNode userNode = rootNode.get("user");
-        if (userNode != null) {
-            this.name = userNode.get("name").asText();
-            this.image = userNode.get("image").asText();
-            this.background = userNode.get("background").asText();
-        }
-    }
-
-    /** Loads the application route and display name. */
-    private void loadApplicationInfo(JsonNode rootNode) {
-        JsonNode nameNode = rootNode.get("name");
-        if (nameNode != null) {
-            this.route = nameNode.get("route").asText();
-            this.applicationName = nameNode.get("applicationName").asText();
-        }
-    }
-
-    /** Loads the list of known payees available for payments. */
+    /**
+     * Executes the loadPayees operation and modify the payload if necessary.
+     *
+     * @param rootNode        The rootNode parameter
+     */
     private void loadPayees(JsonNode rootNode) {
         JsonNode payeesNode = rootNode.get("payees");
         if (payeesNode != null && payeesNode.isArray()) {
@@ -159,7 +172,11 @@ public class BankInfoService {
         }
     }
 
-    /** Loads the bank entry shown in the add-account flow from config. */
+    /**
+     * Executes the loadAddAccountInfo operation and modify the payload if necessary.
+     *
+     * @param rootNode        The rootNode parameter
+     */
     private void loadAddAccountInfo(JsonNode rootNode) {
         JsonNode addAccountInfoNode = rootNode.get("addAccountInfo");
         if (addAccountInfoNode != null) {
@@ -168,8 +185,7 @@ public class BankInfoService {
     }
 
     /**
-     * Overrides addAccountBankInfo with the mock bank defined in application.properties.
-     * Skipped silently if the properties are not configured.
+     * Executes the loadMockBankFromProperties operation and modify the payload if necessary.
      */
     private void loadMockBankFromProperties() {
         try {
@@ -179,13 +195,12 @@ public class BankInfoService {
                 this.addAccountBankInfo = new AddAccountBankInfo(mockBankName, mockBankLogo);
             }
         } catch (IllegalStateException e) {
-            // Mock bank properties are optional — skip silently if not configured
+            
         }
     }
 
     /**
-     * Builds the full configuration response for the frontend, including all
-     * transactions and standing orders sorted and enriched with bank and account info.
+     * Executes the getConfigurations operation and modify the payload if necessary.
      */
     public ConfigResponse getConfigurations() {
         List<Transaction> allTransactions = collectEnrichedTransactions();
@@ -203,8 +218,7 @@ public class BankInfoService {
     }
 
     /**
-     * Flattens transactions from all banks and accounts into a single list,
-     * stamping each entry with its bank name and account ID.
+     * Executes the collectEnrichedTransactions operation and modify the payload if necessary.
      */
     private List<Transaction> collectEnrichedTransactions() {
         List<Transaction> result = new ArrayList<>();
@@ -222,7 +236,13 @@ public class BankInfoService {
         return result;
     }
 
-    /** Creates an enriched copy of a transaction stamped with its bank name and account ID. */
+    /**
+     * Executes the getTransaction operation and modify the payload if necessary.
+     *
+     * @param bank            The bank parameter
+     * @param account         The account parameter
+     * @param transaction     The transaction parameter
+     */
     private static Transaction getTransaction(Bank bank, Account account, Transaction transaction) {
         Transaction enriched = new Transaction();
         enriched.setId(transaction.getId());
@@ -237,8 +257,7 @@ public class BankInfoService {
     }
 
     /**
-     * Flattens standing orders from all banks and accounts into a single list,
-     * stamping each entry with its bank name and account ID.
+     * Executes the collectEnrichedStandingOrders operation and modify the payload if necessary.
      */
     private List<StandingOrder> collectEnrichedStandingOrders() {
         List<StandingOrder> result = new ArrayList<>();
@@ -264,7 +283,9 @@ public class BankInfoService {
         return result;
     }
 
-    /** Builds the data needed to populate the payment page — accounts, payees, and currencies. */
+    /**
+     * Executes the getPaymentPageInfo operation and modify the payload if necessary.
+     */
     public LoadPaymentPageResponse getPaymentPageInfo() {
         List<BankInfoInPayments> bankInfoInPayments = this.banks.stream()
                 .flatMap(bank -> bank.getAccounts().stream()
@@ -274,8 +295,9 @@ public class BankInfoService {
     }
 
     /**
-     * Returns the list of banks available for the add-account flow.
-     * Deduplicates by bank name, with the mock bank appended if configured.
+     * Executes the getAddAccountBanksInformation operation and modify the payload if necessary.
+     *
+     * @throws BankInfoLoadException When an error occurs during the operation
      */
     public List<AddAccountBankInfo> getAddAccountBanksInformation() throws BankInfoLoadException {
         if (this.banks == null) {
@@ -292,41 +314,46 @@ public class BankInfoService {
         return new ArrayList<>(uniqueBanks.values());
     }
 
-    /** Comparator that orders transactions newest first. Unparseable dates are treated as equal. */
+    /**
+     * Executes the byDateDescending operation and modify the payload if necessary.
+     */
     private Comparator<Transaction> byDateDescending() {
         return (t1, t2) -> {
             try {
                 return LocalDate.parse(t2.getDate(), DATE_FORMATTER)
                         .compareTo(LocalDate.parse(t1.getDate(), DATE_FORMATTER));
             } catch (DateTimeParseException e) {
-                // If either date is unparseable, treat the two entries as equal in sort order
+                
                 return 0;
             }
         };
     }
 
-    /** Comparator that orders standing orders by next due date, earliest first. */
+    /**
+     * Executes the byDateAscending operation and modify the payload if necessary.
+     */
     private Comparator<StandingOrder> byDateAscending() {
         return (o1, o2) -> {
             try {
                 return LocalDate.parse(o1.getNextDate(), DATE_FORMATTER)
                         .compareTo(LocalDate.parse(o2.getNextDate(), DATE_FORMATTER));
             } catch (DateTimeParseException e) {
-                // If either date is unparseable, treat the two entries as equal in sort order
+                
                 return 0;
             }
         };
     }
 
+    /**
+     * Executes the getBanks operation and modify the payload if necessary.
+     */
     public List<Bank> getBanks() { return banks; }
     void addBank(Bank bank) { this.banks.add(bank); }
 
-    /** Returns true if a bank with the given name already exists in the loaded data. */
     boolean isBankExists(String bankName) {
         return this.banks.stream().anyMatch(bank -> bankName.equals(bank.getName()));
     }
 
-    /** Finds a specific account by bank name and account ID. */
     Optional<Account> findAccount(String bankName, String accountId) {
         return this.banks.stream()
                 .filter(bank -> bank.getName().equals(bankName))
@@ -335,7 +362,6 @@ public class BankInfoService {
                 .findFirst();
     }
 
-    /** Prepends a new transaction to the account's list and re-sorts by date. */
     void addTransactionToAccount(Account account, Transaction transaction) {
         List<Transaction> transactions = account.getTransactions();
         if (transactions == null) {
@@ -346,7 +372,6 @@ public class BankInfoService {
         transactions.sort(byDateDescending());
     }
 
-    /** Groups all accounts by ConsentId to render in the UI for deletion. */
     public List<Map<String, Object>> getAccountsGroupedByConsent() {
         if (this.banks == null) return Collections.emptyList();
         Map<String, Map<String, Object>> consentGroupMap = new LinkedHashMap<>();
@@ -371,21 +396,11 @@ public class BankInfoService {
         return new ArrayList<>(consentGroupMap.values());
     }
 
-//    /** Retrieves the access token associated with a consentId, useful for revocation. */
-//    public String getAccessTokenForConsent(String consentId) {
-//        if (this.banks == null) return null;
-//        for (Bank bank : this.banks) {
-//            if (bank.getAccounts() == null) continue;
-//            for (Account account : bank.getAccounts()) {
-//                if (consentId.equals(account.getConsentId())) {
-//                    return account.getAccessToken();
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
-    /** Removes all accounts tied to the specified consent ID. */
+    /**
+     * Executes the deleteAccountsByConsentId operation and modify the payload if necessary.
+     *
+     * @param consentId       The consentId parameter
+     */
     public void deleteAccountsByConsentId(String consentId) {
         if (this.banks == null) return;
         for (Bank bank : this.banks) {

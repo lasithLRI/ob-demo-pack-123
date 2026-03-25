@@ -22,6 +22,7 @@ import ApplicationLayout from "../../layouts/application-layout/application-layo
 import PaymentAccountPageLayout from "../../layouts/payment-account-page-layout/payment-account-page-layout.tsx";
 import TableComponent from "../../components/table-component.tsx";
 
+/** StandingOrdersTableProps implementation */
 interface StandingOrdersTableProps {
     name:string;
     standingOrdersList:StandingOrders[];
@@ -29,9 +30,11 @@ interface StandingOrdersTableProps {
 }
 
 /**
- * @function AllStandingOrders
- * @description A dedicated page component for displaying all recurring payments
- * (standing orders) in a table. Integrates into the main application layout.
+ * Executes the AllStandingOrders operation and modify the payload if necessary.
+ *
+ * @param standingOrdersTableHeaderData The standingOrdersTableHeaderData parameter
+ * @param name            The name parameter
+ * @param standingOrdersList The standingOrdersList parameter
  */
 const AllStandingOrders = ({standingOrdersTableHeaderData,
                                name, standingOrdersList}:StandingOrdersTableProps)=>{

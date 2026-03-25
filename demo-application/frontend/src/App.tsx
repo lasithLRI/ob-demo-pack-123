@@ -50,17 +50,35 @@ const App: React.FC = () => {
         refetch
     } = useConfigContext();
 
+    /**
+     * Executes the useEffect operation and modify the payload if necessary.
+     *
+     * @param (               The ( parameter
+     */
     useEffect(() => {
         if (!state.isAuthenticated && !state.isLoading) {
+            /**
+             * Executes the signIn operation and modify the payload if necessary.
+             */
             signIn();
         }
     }, [state.isAuthenticated, state.isLoading, signIn]);
 
+    /**
+     * Executes the useEffect operation and modify the payload if necessary.
+     *
+     * @param (               The ( parameter
+     */
     useEffect(() => {
         if (state.isAuthenticated) {
             getBasicUserInfo()
                 .then((info) => {
                     console.log("RAW user info:", info);
+                    /**
+                     * Executes the setUser operation and modify the payload if necessary.
+                     *
+                     * @param info            The info parameter
+                     */
                     setUser(info);
                 })
                 .catch((err) => console.error("getBasicUserInfo error:", err));
@@ -78,13 +96,13 @@ const App: React.FC = () => {
     return (
         <AppThemeProvider color={colors}>
             <Routes>
-                {/* Root → home */}
+                {}
                 <Route
                     path="/"
                     element={<Navigate to={`/${appInfo.route}`} replace />}
                 />
 
-                {/* Home dashboard */}
+                {}
                 <Route
                     path={`/${appInfo.route}`}
                     element={
@@ -113,13 +131,13 @@ const App: React.FC = () => {
                     }
                 />
 
-                {/* Add account */}
+                {}
                 <Route
                     path={`/${appInfo.route}/accounts`}
                     element={<AddAccountsPage />}
                 />
 
-                {/* Payments */}
+                {}
                 <Route
                     path={`/${appInfo.route}/payments`}
                     element={
@@ -133,7 +151,7 @@ const App: React.FC = () => {
                     }
                 />
 
-                {/* Transactions */}
+                {}
                 <Route
                     path={`/${appInfo.route}/transactions`}
                     element={
@@ -145,7 +163,7 @@ const App: React.FC = () => {
                     }
                 />
 
-                {/* Standing Orders */}
+                {}
                 <Route
                     path={`/${appInfo.route}/standing-orders`}
                     element={
@@ -157,7 +175,7 @@ const App: React.FC = () => {
                     }
                 />
 
-                {/* Catch-all → home */}
+                {}
                 <Route
                     path="*"
                     element={<Navigate to={`/${appInfo.route}`} replace />}

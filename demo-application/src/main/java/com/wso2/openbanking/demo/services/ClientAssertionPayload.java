@@ -1,44 +1,40 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.services;
 
 import org.json.JSONObject;
 
-/**
- * Represents the payload of a JWT client assertion used to authenticate
- * this application to the token endpoint during OAuth flows.
- *
- * Once constructed, the payload is serialized to JSON via toJson()
- * for embedding in a signed JWT.
- */
+/** ClientAssertionPayload implementation */
 public class ClientAssertionPayload {
 
-    /** The issuer — typically the client ID of this application. */
     private final String iss;
 
-    /** The subject — typically the same as the issuer for client assertions. */
     private final String sub;
 
-    /** The expiration time as a Unix epoch timestamp (seconds). */
     private final long exp;
 
-    /** The issued-at time as a Unix epoch timestamp (seconds). */
     private final long iat;
 
-    /** A unique JWT ID used to prevent replay attacks. */
     private final String jti;
 
-    /** The intended audience — typically the token endpoint URL. */
     private final String aud;
 
-    /**
-     * Constructs a new ClientAssertionPayload with all required JWT claims.
-     *
-     * @param iss the issuer claim — typically the client ID of this application.
-     * @param sub the subject claim — typically the same as iss for client assertions.
-     * @param exp the expiration time as a Unix epoch timestamp (seconds).
-     * @param iat the issued-at time as a Unix epoch timestamp (seconds).
-     * @param jti a unique JWT ID to prevent replay attacks.
-     * @param aud the audience claim — typically the token endpoint URL.
-     */
     public ClientAssertionPayload(String iss, String sub, long exp, long iat, String jti, String aud) {
         this.iss = iss;
         this.sub = sub;
@@ -49,9 +45,7 @@ public class ClientAssertionPayload {
     }
 
     /**
-     * Serializes this payload to a JSON string for embedding in a JWT.
-     *
-     * @return a JSON string containing all JWT claims.
+     * Executes the toJson operation and modify the payload if necessary.
      */
     public String toJson() {
         return new JSONObject()

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -35,18 +35,25 @@ import {
 } from "@oxygen-ui/react";
 import useConfigContext from "../../hooks/use-config-context.ts";
 
+/** DeleteAccountModalProps implementation */
 interface DeleteAccountModalProps {
     open: boolean;
     onClose: () => void;
     onSuccess: () => void;
 }
 
+/** SelectedAccount implementation */
 interface SelectedAccount {
     accountId: string;
     accountName: string;
     bankName: string;
 }
 
+/**
+ * Executes the DeleteAccountModal operation and modify the payload if necessary.
+ *
+ * @param onClose         The onClose parameter
+ */
 export const DeleteAccountModal = ({ open, onClose, onSuccess }: DeleteAccountModalProps) => {
     const { banksWithAccounts, getAffectedAccounts, revokeConsent } = useConfigContext();
 
@@ -56,109 +63,291 @@ export const DeleteAccountModal = ({ open, onClose, onSuccess }: DeleteAccountMo
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const deletableBanks = banksWithAccounts.filter(({ bank }) => bank.flag === true);
+
+    /**
+     * Executes the handleSelect operation and modify the payload if necessary.
+     *
+     * @param accountId       The accountId parameter
+     * @param accountName     The accountName parameter
+     * @param bankName        The bankName parameter
+     */
     const handleSelect = async (accountId: string, accountName: string, bankName: string) => {
+        /**
+         * Executes the setSelected operation and modify the payload if necessary.
+         *
+         * @param accountName     The accountName parameter
+         */
         setSelected({ accountId, accountName, bankName });
+        /**
+         * Executes the setError operation and modify the payload if necessary.
+         *
+         * @param null            The null parameter
+         */
         setError(null);
+        /**
+         * Executes the setPreviewLoading operation and modify the payload if necessary.
+         *
+         * @param true            The true parameter
+         */
         setPreviewLoading(true);
         try {
             const affected = await getAffectedAccounts(accountId, bankName);
+            /**
+             * Executes the setAffectedAccounts operation and modify the payload if necessary.
+             *
+             * @param affected        The affected parameter
+             */
             setAffectedAccounts(affected);
         } catch {
-            setError("Failed to load affected accounts.");
+            /**
+             * Executes the setError operation and modify the payload if necessary.
+             */
+            setError("Failed to load linked accounts. Please try again.");
         } finally {
+            /**
+             * Executes the setPreviewLoading operation and modify the payload if necessary.
+             *
+             * @param false           The false parameter
+             */
             setPreviewLoading(false);
         }
     };
 
+    /**
+     * Executes the handleConfirm operation and modify the payload if necessary.
+     */
     const handleConfirm = async () => {
         if (!selected) return;
+        /**
+         * Executes the setDeleteLoading operation and modify the payload if necessary.
+         *
+         * @param true            The true parameter
+         */
         setDeleteLoading(true);
+        /**
+         * Executes the setError operation and modify the payload if necessary.
+         *
+         * @param null            The null parameter
+         */
         setError(null);
         try {
             const success = await revokeConsent(selected.accountId, selected.bankName);
             if (success) {
+                /**
+                 * Executes the handleClose operation and modify the payload if necessary.
+                 */
                 handleClose();
+                /**
+                 * Executes the onSuccess operation and modify the payload if necessary.
+                 */
                 onSuccess();
             } else {
-                setError("Failed to delete account. Please try again.");
+                /**
+                 * Executes the setError operation and modify the payload if necessary.
+                 */
+                setError("Failed to revoke consent. Please try again.");
             }
         } catch {
-            setError("An error occurred. Please try again.");
+            /**
+             * Executes the setError operation and modify the payload if necessary.
+             */
+            setError("An unexpected error occurred. Please try again.");
         } finally {
+            /**
+             * Executes the setDeleteLoading operation and modify the payload if necessary.
+             *
+             * @param false           The false parameter
+             */
             setDeleteLoading(false);
         }
     };
 
+    /**
+     * Executes the handleClose operation and modify the payload if necessary.
+     */
     const handleClose = () => {
+        /**
+         * Executes the setSelected operation and modify the payload if necessary.
+         *
+         * @param null            The null parameter
+         */
         setSelected(null);
+        /**
+         * Executes the setAffectedAccounts operation and modify the payload if necessary.
+         *
+         * @param []              The [] parameter
+         */
         setAffectedAccounts([]);
+        /**
+         * Executes the setError operation and modify the payload if necessary.
+         *
+         * @param null            The null parameter
+         */
         setError(null);
+        /**
+         * Executes the onClose operation and modify the payload if necessary.
+         */
         onClose();
     };
 
+    const linkedAccounts = affectedAccounts.filter((acc) => acc.id !== selected?.accountId);
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-            <DialogTitle>Delete Account</DialogTitle>
-            <DialogContent dividers>
-                {banksWithAccounts.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">
-                        No accounts found.
+
+            {}
+            <DialogTitle sx={{ pb: 1.5 }}>
+                <Typography variant="h6" fontWeight={600}>
+                    Delete Account
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mt={0.25}>
+                    Select an account to revoke its bank consent.
+                </Typography>
+            </DialogTitle>
+
+            <Divider />
+
+            <DialogContent sx={{ pt: 2, pb: 1 }}>
+
+                {}
+                <Alert severity="warning" sx={{ mb: 2 }}>
+                    <Typography variant="body2" fontWeight={600} gutterBottom>
+                        This action will revoke the bank&apos;s permission
                     </Typography>
+                    <Typography variant="body2">
+                        Deleting an account permanently removes the bank&apos;s consent to access your data.
+                        You will need to re-authorise to reconnect.
+                    </Typography>
+                </Alert>
+
+                {}
+                {deletableBanks.length === 0 ? (
+                    <Box
+                        sx={{
+                            py: 4,
+                            textAlign: "center",
+                            color: "text.secondary",
+                            bgcolor: "action.hover",
+                            borderRadius: 1,
+                        }}
+                    >
+                        <Typography variant="body2">No accounts available for deletion.</Typography>
+                    </Box>
                 ) : (
-                    banksWithAccounts.map(({ bank, accounts }) => (
+                    deletableBanks.map(({ bank, accounts }) => (
                         <Box key={bank.name} mb={2}>
-                            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                            <Typography
+                                variant="overline"
+                                color="text.secondary"
+                                sx={{ fontWeight: 600, letterSpacing: "0.06em" }}
+                            >
                                 {bank.name}
                             </Typography>
-                            <Divider />
+                            <Divider sx={{ mt: 0.5, mb: 0.75 }} />
                             <List disablePadding>
-                                {accounts.map((account) => (
-                                    <ListItem key={account.id} disablePadding>
-                                        <ListItemButton
-                                            selected={selected?.accountId === account.id}
-                                            onClick={() => handleSelect(account.id, account.name, bank.name)}
-                                        >
-                                            <ListItemText
-                                                primary={account.name}
-                                                secondary={account.id}
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                ))}
+                                {accounts.map((account) => {
+                                    const isSelected = selected?.accountId === account.id;
+                                    return (
+                                        <ListItem key={account.id} disablePadding sx={{ mb: 0.5 }}>
+                                            <ListItemButton
+                                                selected={isSelected}
+                                                onClick={() =>
+                                                    handleSelect(account.id, account.name, bank.name)
+                                                }
+                                                sx={{
+                                                    borderRadius: 1,
+                                                    border: "1px solid",
+                                                    borderColor: isSelected ? "error.main" : "divider",
+                                                    bgcolor: isSelected ? "error.lighter" : "transparent",
+                                                    "&:hover": {
+                                                        bgcolor: isSelected ? "error.lighter" : "action.hover",
+                                                    },
+                                                }}
+                                            >
+                                                <ListItemText
+                                                    primary={
+                                                        <Typography
+                                                            variant="body2"
+                                                            fontWeight={isSelected ? 600 : 400}
+                                                        >
+                                                            {account.name}
+                                                        </Typography>
+                                                    }
+                                                    secondary={
+                                                        <Typography
+                                                            variant="caption"
+                                                            color="text.secondary"
+                                                            sx={{ fontFamily: "monospace" }}
+                                                        >
+                                                            {account.id}
+                                                        </Typography>
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    );
+                                })}
                             </List>
                         </Box>
                     ))
                 )}
 
+                {}
                 {previewLoading && (
-                    <Box display="flex" justifyContent="center" mt={1}>
-                        <CircularProgress size={20} />
+                    <Box display="flex" alignItems="center" gap={1} mt={1}>
+                        <CircularProgress size={14} />
+                        <Typography variant="caption" color="text.secondary">
+                            Checking linked accounts…
+                        </Typography>
                     </Box>
                 )}
 
-                {!previewLoading && selected && affectedAccounts.length > 1 && (
-                    <Alert severity="warning" sx={{ mt: 2 }}>
-                        <Typography variant="body2" fontWeight="bold" gutterBottom>
-                            The following accounts will also be deleted:
+                {}
+                {!previewLoading && selected && linkedAccounts.length > 0 && (
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                        <Typography variant="body2" fontWeight={600} gutterBottom>
+                            Linked accounts will also lose access
                         </Typography>
-                        {affectedAccounts
-                            .filter((acc) => acc.id !== selected.accountId)
-                            .map((acc) => (
-                                <Typography key={acc.id} variant="body2">
-                                    • {acc.name} ({acc.id})
+                        <Typography variant="body2" gutterBottom>
+                            The following accounts share the same consent as{" "}
+                            <strong>{selected.accountName}</strong> and will also be revoked:
+                        </Typography>
+                        <Box component="ul" sx={{ m: 0, pl: 2 }}>
+                            {linkedAccounts.map((acc) => (
+                                <Typography key={acc.id} component="li" variant="body2">
+                                    {acc.name}{" "}
+                                    <Typography
+                                        component="span"
+                                        variant="caption"
+                                        color="text.secondary"
+                                        sx={{ fontFamily: "monospace" }}
+                                    >
+                                        ({acc.id})
+                                    </Typography>
                                 </Typography>
                             ))}
+                        </Box>
                     </Alert>
                 )}
 
+                {}
                 {error && (
-                    <Typography variant="body2" color="error" mt={1}>
-                        {error}
-                    </Typography>
+                    <Alert severity="error" sx={{ mt: 1.5 }}>
+                        <Typography variant="body2">{error}</Typography>
+                    </Alert>
                 )}
             </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose} disabled={deleteLoading}>
+
+            {}
+            <Divider />
+            <DialogActions sx={{ px: 2.5, py: 1.5, gap: 1 }}>
+                <Button
+                    onClick={handleClose}
+                    disabled={deleteLoading}
+                    variant="outlined"
+                    color="inherit"
+                >
                     Cancel
                 </Button>
                 <Button
@@ -166,8 +355,16 @@ export const DeleteAccountModal = ({ open, onClose, onSuccess }: DeleteAccountMo
                     disabled={!selected || previewLoading || deleteLoading}
                     color="error"
                     variant="contained"
+                    sx={{ minWidth: 130 }}
                 >
-                    {deleteLoading ? <CircularProgress size={20} /> : "Delete"}
+                    {deleteLoading ? (
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <CircularProgress size={15} color="inherit" />
+                            <span>Revoking…</span>
+                        </Box>
+                    ) : (
+                        "Revoke & Delete"
+                    )}
                 </Button>
             </DialogActions>
         </Dialog>

@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.services;
 
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
@@ -15,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** AccountService implementation */
 public class AccountService {
 
     private final BankInfoService bankInfoService;
@@ -38,10 +57,21 @@ public class AccountService {
         this.oauthService = new OAuthTokenService(client);
     }
 
+    /**
+     * Executes the setAccessToken operation and modify the payload if necessary.
+     *
+     * @param accessToken     The accessToken parameter
+     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
+    /**
+     * Executes the addMockBankAccountsInformation operation and modify the payload if necessary.
+     *
+     * @throws IOException    When an error occurs during the operation
+     * @throws BankInfoLoadException When an error occurs during the operation
+     */
     public void addMockBankAccountsInformation() throws IOException, BankInfoLoadException {
         if (bankInfoService.getBanks() == null) {
             bankInfoService.loadBanks();
@@ -64,6 +94,12 @@ public class AccountService {
         }
     }
 
+    /**
+     * Executes the processAddAccount operation and modify the payload if necessary.
+     *
+     * @param bankName        The bankName parameter
+     * @throws Exception      When an error occurs during the operation
+     */
     public String processAddAccount(String bankName) throws Exception {
         if (!bankName.equals(ConfigLoader.getMockBankName())) {
             return null;
@@ -84,6 +120,11 @@ public class AccountService {
         return redirectUrl;
     }
 
+    /**
+     * Executes the getExistingAccountIds operation and modify the payload if necessary.
+     *
+     * @param bankName        The bankName parameter
+     */
     private Set<String> getExistingAccountIds(String bankName) {
         Set<String> existingIds = new HashSet<>();
         if (bankInfoService.getBanks() == null) {
@@ -96,6 +137,12 @@ public class AccountService {
         return existingIds;
     }
 
+    /**
+     * Executes the addAccountsToExistingBank operation and modify the payload if necessary.
+     *
+     * @param bankName        The bankName parameter
+     * @param newAccounts     The newAccounts parameter
+     */
     private void addAccountsToExistingBank(String bankName, List<Account> newAccounts) {
         bankInfoService.getBanks().stream()
                 .filter(bank -> bank.getName().equals(bankName))
@@ -114,6 +161,11 @@ public class AccountService {
                 });
     }
 
+    /**
+     * Executes the fetchAccountIds operation and modify the payload if necessary.
+     *
+     * @throws IOException    When an error occurs during the operation
+     */
     private List<String> fetchAccountIds() throws IOException {
         String response = client.getWithAuth(
                 ConfigLoader.getAccountBaseUrl() + "/accounts",
@@ -129,6 +181,13 @@ public class AccountService {
         return accountIds;
     }
 
+    /**
+     * Executes the fetchAccountsWithTransactions operation and modify the payload if necessary.
+     *
+     * @param accountIds      The accountIds parameter
+     * @param bankName        The bankName parameter
+     * @throws IOException    When an error occurs during the operation
+     */
     private List<Account> fetchAccountsWithTransactions(List<String> accountIds, String bankName) throws IOException {
         List<Account> accounts = new ArrayList<>();
         for (String accountId : accountIds) {
@@ -144,6 +203,12 @@ public class AccountService {
         return accounts;
     }
 
+    /**
+     * Executes the fetchAccountName operation and modify the payload if necessary.
+     *
+     * @param accountId       The accountId parameter
+     * @throws IOException    When an error occurs during the operation
+     */
     private String fetchAccountName(String accountId) throws IOException {
         String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId;
         String response = client.getWithAuth(url, this.accessToken);
@@ -159,6 +224,12 @@ public class AccountService {
         return accountDataNode.optString("Nickname", "Standard Account");
     }
 
+    /**
+     * Executes the fetchAccountBalance operation and modify the payload if necessary.
+     *
+     * @param accountId       The accountId parameter
+     * @throws IOException    When an error occurs during the operation
+     */
     private double fetchAccountBalance(String accountId) throws IOException {
         String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId + "/balances";
         String response = client.getWithAuth(url, this.accessToken);
@@ -171,6 +242,13 @@ public class AccountService {
         return Double.parseDouble(amount);
     }
 
+    /**
+     * Executes the fetchAccountTransactions operation and modify the payload if necessary.
+     *
+     * @param accountId       The accountId parameter
+     * @param bankName        The bankName parameter
+     * @throws IOException    When an error occurs during the operation
+     */
     private List<Transaction> fetchAccountTransactions(String accountId, String bankName) throws IOException {
         String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId + "/transactions";
         String response = client.getWithAuth(url, this.accessToken);
@@ -184,6 +262,13 @@ public class AccountService {
         return transactions;
     }
 
+    /**
+     * Executes the parseTransaction operation and modify the payload if necessary.
+     *
+     * @param txn             The txn parameter
+     * @param bankName        The bankName parameter
+     * @param accountId       The accountId parameter
+     */
     private Transaction parseTransaction(JSONObject txn, String bankName, String accountId) {
         Transaction transaction = new Transaction();
         transaction.setId(txn.getString("TransactionId"));
@@ -198,6 +283,11 @@ public class AccountService {
         return transaction;
     }
 
+    /**
+     * Executes the convertIsoDateTimeToDate operation and modify the payload if necessary.
+     *
+     * @param isoDateTime     The isoDateTime parameter
+     */
     private String convertIsoDateTimeToDate(String isoDateTime) {
         try {
             return ZonedDateTime.parse(isoDateTime, ISO_DATETIME_FORMATTER).format(DATE_FORMATTER);
@@ -214,6 +304,12 @@ public class AccountService {
         }
     }
 
+    /**
+     * Executes the addNewBank operation and modify the payload if necessary.
+     *
+     * @param bankName        The bankName parameter
+     * @param accounts        The accounts parameter
+     */
     private void addNewBank(String bankName, List<Account> accounts) {
         Bank newBank = new Bank(
                 bankName,
@@ -225,6 +321,9 @@ public class AccountService {
         bankInfoService.addBank(newBank);
     }
 
+    /**
+     * Executes the createAccountConsentBody operation and modify the payload if necessary.
+     */
     private String createAccountConsentBody() {
         ZonedDateTime now = ZonedDateTime.now(java.time.ZoneOffset.of("+05:30"));
         JSONObject permissions = new JSONObject()
@@ -242,6 +341,13 @@ public class AccountService {
                 .toString();
     }
 
+    /**
+     * Executes the revokeAccountConsent operation and modify the payload if necessary.
+     *
+     * @param accountId       The accountId parameter
+     * @param bankName        The bankName parameter
+     * @throws Exception      When an error occurs during the operation
+     */
     public boolean revokeAccountConsent(String accountId, String bankName) throws Exception {
         System.out.println("[DELETE] Attempting to revoke consent for accountId: " + accountId + ", bankName: " + bankName);
 

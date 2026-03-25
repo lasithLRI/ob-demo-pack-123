@@ -1,5 +1,22 @@
-package com.wso2.openbanking.demo.services;
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
+package com.wso2.openbanking.demo.services;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.PaymentException;
@@ -17,10 +34,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-/**
- * Handles payment consent initiation and applies completed payments
- * to the in-memory account ledger.
- */
+/** PaymentService implementation */
 public class PaymentService {
 
     private static final DateTimeFormatter DATE_FORMATTER =
@@ -34,7 +48,6 @@ public class PaymentService {
     private Payment currentPayment;
     private String currentConsentId;
 
-    /** Initialises the service and creates an OAuthTokenService for the payment flow. */
     public PaymentService(BankInfoService bankInfoService, HttpTlsClient client)
             throws GeneralSecurityException, IOException {
         this.bankInfoService = bankInfoService;
@@ -43,8 +56,10 @@ public class PaymentService {
     }
 
     /**
-     * Initiates the payment consent flow — obtains a token, posts the consent,
-     * and returns the authorization redirect URL for user approval.
+     * Executes the processPaymentRequest operation and modify the payload if necessary.
+     *
+     * @param payment         The payment parameter
+     * @throws AuthorizationException When an error occurs during the operation
      */
     public String processPaymentRequest(Payment payment) throws AuthorizationException {
         this.currentPayment = payment;
@@ -65,8 +80,10 @@ public class PaymentService {
     }
 
     /**
-     * Submits the payment to the Open Banking API, applies it to the user's account balance,
-     * and records it as a transaction. Clears currentPayment and currentConsentId when done.
+     * Executes the addPaymentToAccount operation and modify the payload if necessary.
+     *
+     * @param accessToken     The accessToken parameter
+     * @throws PaymentException When an error occurs during the operation
      */
     public void addPaymentToAccount(String accessToken) throws PaymentException {
         if (currentPayment == null || currentConsentId == null) {
@@ -95,7 +112,13 @@ public class PaymentService {
         }
     }
 
-    /** Builds a Transaction model from the current payment details. */
+    /**
+     * Executes the createPaymentTransaction operation and modify the payload if necessary.
+     *
+     * @param payment         The payment parameter
+     * @param bankName        The bankName parameter
+     * @param accountNumber   The accountNumber parameter
+     */
     private Transaction createPaymentTransaction(Payment payment, String bankName, String accountNumber) {
         Transaction transaction = new Transaction();
         transaction.setId(generateTransactionId());
@@ -109,7 +132,15 @@ public class PaymentService {
         return transaction;
     }
 
-    /** Validates the account exists and has sufficient balance, then deducts and records the transaction. */
+    /**
+     * Executes the updateAccountBalance operation and modify the payload if necessary.
+     *
+     * @param bankName        The bankName parameter
+     * @param accountNumber   The accountNumber parameter
+     * @param amount          The amount parameter
+     * @param transaction     The transaction parameter
+     * @throws PaymentException When an error occurs during the operation
+     */
     private void updateAccountBalance(String bankName, String accountNumber,
                                       double amount, Transaction transaction) throws PaymentException {
         Optional<Account> accountOpt = bankInfoService.findAccount(bankName, accountNumber);
@@ -126,7 +157,11 @@ public class PaymentService {
         bankInfoService.addTransactionToAccount(account, transaction);
     }
 
-    /** Builds the full payment consent request body as a JSON string. */
+    /**
+     * Executes the createPaymentConsentBody operation and modify the payload if necessary.
+     *
+     * @param payment         The payment parameter
+     */
     private String createPaymentConsentBody(Payment payment) {
         String[] userAccount = parseAccountIdentifier(payment.getUserAccount());
         String[] payeeAccount = parseAccountIdentifier(payment.getPayeeAccount());
@@ -140,7 +175,12 @@ public class PaymentService {
                 .toString(4);
     }
 
-    /** Builds the full payment submission request body as a JSON string. */
+    /**
+     * Executes the createPaymentSubmissionBody operation and modify the payload if necessary.
+     *
+     * @param payment         The payment parameter
+     * @param consentId       The consentId parameter
+     */
     private String createPaymentSubmissionBody(Payment payment, String consentId) {
         String[] userAccount = parseAccountIdentifier(payment.getUserAccount());
         String[] payeeAccount = parseAccountIdentifier(payment.getPayeeAccount());
@@ -156,7 +196,15 @@ public class PaymentService {
                 .toString(4);
     }
 
-    /** Builds the Initiation object within the payment consent body. */
+    /**
+     * Executes the buildInitiation operation and modify the payload if necessary.
+     *
+     * @param userAccount     The userAccount parameter
+     * @param payeeAccount    The payeeAccount parameter
+     * @param amount          The amount parameter
+     * @param currency        The currency parameter
+     * @param reference       The reference parameter
+     */
     private JSONObject buildInitiation(String[] userAccount, String[] payeeAccount,
                                        String amount, String currency, String reference) {
         JSONObject initiation = new JSONObject();
@@ -173,14 +221,23 @@ public class PaymentService {
         return initiation;
     }
 
-    /** Builds the InstructedAmount JSON object. */
+    /**
+     * Executes the buildAmount operation and modify the payload if necessary.
+     *
+     * @param amount          The amount parameter
+     * @param currency        The currency parameter
+     */
     private JSONObject buildAmount(String amount, String currency) {
         return new JSONObject()
                 .put("Amount", formatAmount(amount))
                 .put("Currency", currency);
     }
 
-    /** Builds the CreditorAccount JSON object for the payee. */
+    /**
+     * Executes the buildCreditorAccount operation and modify the payload if necessary.
+     *
+     * @param payeeAccount    The payeeAccount parameter
+     */
     private JSONObject buildCreditorAccount(String[] payeeAccount) {
         return new JSONObject()
                 .put("SchemeName", "OB.SortCodeAccountNumber")
@@ -189,7 +246,11 @@ public class PaymentService {
                 .put("SecondaryIdentification", "0002");
     }
 
-    /** Builds the DebtorAccount JSON object for the payer. */
+    /**
+     * Executes the buildDebtorAccount operation and modify the payload if necessary.
+     *
+     * @param userAccount     The userAccount parameter
+     */
     private JSONObject buildDebtorAccount(String[] userAccount) {
         return new JSONObject()
                 .put("SchemeName", "OB.SortCodeAccountNumber")
@@ -198,18 +259,28 @@ public class PaymentService {
                 .put("SecondaryIdentification", userAccount[1] + "001");
     }
 
-    /** Generates a random transaction ID in the format T########. */
+    /**
+     * Executes the generateTransactionId operation and modify the payload if necessary.
+     */
     private String generateTransactionId() {
         return String.format("T%08d", RANDOM.nextInt(100_000_000));
     }
 
-    /** Splits a "BankName-AccountNumber" identifier into a two-element array. */
+    /**
+     * Executes the parseAccountIdentifier operation and modify the payload if necessary.
+     *
+     * @param accountIdentifier The accountIdentifier parameter
+     */
     private String[] parseAccountIdentifier(String accountIdentifier) {
         String[] parts = accountIdentifier.split("-", 2);
         return new String[]{parts[0], parts.length > 1 ? parts[1] : ""};
     }
 
-    /** Formats an amount string to two decimal places, returning the original if unparseable. */
+    /**
+     * Executes the formatAmount operation and modify the payload if necessary.
+     *
+     * @param amount          The amount parameter
+     */
     private String formatAmount(String amount) {
         try {
             return String.format("%.2f", Double.parseDouble(amount));
@@ -218,17 +289,25 @@ public class PaymentService {
         }
     }
 
-    /** Generates a short unique instruction ID prefixed with "INST-". */
+    /**
+     * Executes the generateInstructionId operation and modify the payload if necessary.
+     */
     private String generateInstructionId() {
         return "INST-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
-    /** Generates a short unique end-to-end ID prefixed with "E2E-". */
+    /**
+     * Executes the generateEndToEndId operation and modify the payload if necessary.
+     */
     private String generateEndToEndId() {
         return "E2E-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
-    /** Converts a hex character to a single decimal digit. */
+    /**
+     * Executes the hexCharToDigit operation and modify the payload if necessary.
+     *
+     * @param c               The c parameter
+     */
     private int hexCharToDigit(char c) {
         if (c >= '0' && c <= '9') {
             return c - '0';
@@ -238,8 +317,9 @@ public class PaymentService {
     }
 
     /**
-     * Generates a numeric-only ID of the given length by converting
-     * UUID hex characters to digits, padding with random digits if needed.
+     * Executes the generateNumericId operation and modify the payload if necessary.
+     *
+     * @param length          The length parameter
      */
     private String generateNumericId(int length) {
         String uuid = UUID.randomUUID().toString().replace("-", "");

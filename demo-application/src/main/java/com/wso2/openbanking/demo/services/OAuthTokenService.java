@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.services;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
@@ -9,25 +27,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-/**
- * Handles OAuth token acquisition and consent initialization for both
- * account and payment flows. Builds and signs JWT client assertions
- * for client_credentials and authorization_code grant requests.
- */
+/** OAuthTokenService implementation */
 public final class OAuthTokenService {
 
     private final HttpTlsClient client;
     private final JwtTokenService jwtTokenService;
 
-    /**
-     * Initialises the service and acquires the shared JwtTokenService singleton.
-     *
-     * @param client the mTLS HTTP client used for all outbound token and consent requests.
-     * @throws GeneralSecurityException if the JwtTokenService cannot load the signing key.
-     * @throws IOException if the signing key file cannot be read.
-     */
     @SuppressWarnings("EI_EXPOSE_REP2")
-// client is a shared service dependency — defensive copying is not appropriate.
     public OAuthTokenService(HttpTlsClient client)
             throws GeneralSecurityException, IOException {
         this.client = client;
@@ -35,13 +41,10 @@ public final class OAuthTokenService {
     }
 
     /**
-     * Obtains a client_credentials access token for the given scope.
-     * A signed client assertion JWT is built and posted to the token endpoint,
-     * and the raw JSON token response is returned to the caller.
+     * Executes the getToken operation and modify the payload if necessary.
      *
-     * @param scope the OAuth scope to request (e.g. "accounts" or "payments").
-     * @return the raw JSON token response string containing the access token.
-     * @throws AuthorizationException if the token endpoint cannot be reached or signing fails.
+     * @param scope           The scope parameter
+     * @throws AuthorizationException When an error occurs during the operation
      */
     public String getToken(String scope) throws AuthorizationException {
         try {
@@ -55,52 +58,18 @@ public final class OAuthTokenService {
         }
     }
 
-    /**
-     * Posts an account consent initiation request and returns the raw consent response JSON.
-     * The access token is extracted from the token response before the request is sent.
-     * No idempotency key is required for account consent initiation.
-     *
-     * @param token the raw JSON token response string containing the access token.
-     * @param consentBody the JSON consent request body specifying permissions and date range.
-     * @param url the account-access-consents endpoint URL.
-     * @return the raw JSON consent response containing the ConsentId.
-     * @throws IOException if the HTTP call fails.
-     * @throws JSONException if the token response cannot be parsed.
-     */
     public String initializeConsent(String token, String consentBody, String url)
             throws IOException, JSONException {
         String accessToken = new JSONObject(token).getString("access_token");
         return client.postConsentInit(url, consentBody, accessToken);
     }
 
-    /**
-     * Posts a payment consent initiation request and returns the raw consent response JSON.
-     * The access token is extracted from the token response before the request is sent.
-     * The underlying HTTP call includes the required x-idempotency-key header.
-     *
-     * @param token the raw JSON token response string containing the access token.
-     * @param consentBody the JSON payment consent request body.
-     * @param url the payment-consents endpoint URL.
-     * @return the raw JSON consent response containing the ConsentId.
-     * @throws IOException if the HTTP call fails.
-     * @throws JSONException if the token response cannot be parsed.
-     */
     public String initializePaymentConsent(String token, String consentBody, String url)
             throws IOException, JSONException {
         String accessToken = new JSONObject(token).getString("access_token");
         return client.postPaymentConsentInit(url, consentBody, accessToken);
     }
 
-    /**
-     * Extracts the consent ID from the consent response, builds a signed request object,
-     * and sends the authorization request, returning the redirect URL for user consent.
-     *
-     * @param consentResponse the raw JSON consent response returned by the bank.
-     * @param scope the OAuth scope associated with the consent (e.g. "accounts openid").
-     * @return the redirect URL the user must visit to approve the consent.
-     * @throws GeneralSecurityException if the request object JWT cannot be signed.
-     * @throws IOException if the authorization request fails.
-     */
     public String authorizeConsent(String consentResponse, String scope)
             throws GeneralSecurityException, IOException {
         String consentId = extractConsentId(consentResponse);
@@ -109,10 +78,9 @@ public final class OAuthTokenService {
     }
 
     /**
-     * Parses the ConsentId from the consent initiation response.
+     * Executes the extractConsentId operation and modify the payload if necessary.
      *
-     * @param consentResponse the raw JSON consent response returned by the bank.
-     * @return the ConsentId string extracted from the Data object.
+     * @param consentResponse The consentResponse parameter
      */
     private String extractConsentId(String consentResponse) {
         return new JSONObject(consentResponse)
@@ -121,11 +89,10 @@ public final class OAuthTokenService {
     }
 
     /**
-     * Builds the URL-encoded body for a client_credentials token request.
+     * Executes the buildTokenRequestBody operation and modify the payload if necessary.
      *
-     * @param scope the OAuth scope to request.
-     * @param clientAssertion the signed JWT client assertion string.
-     * @return a URL-encoded form body string ready for posting to the token endpoint.
+     * @param scope           The scope parameter
+     * @param clientAssertion The clientAssertion parameter
      */
     private String buildTokenRequestBody(String scope, String clientAssertion) {
         return "grant_type=client_credentials" +

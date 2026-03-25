@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -17,15 +17,9 @@
  */
 
 /**
- * Generates a random transaction ID with exactly 8 digits
- * Ensures uniqueness by checking against existing transaction IDs
+ * Executes the generateTransactionId operation and modify the payload if necessary.
  *
- * @param {Array} existingTransactions - Array of existing transactions to avoid duplicates
- * @returns {string} Transaction ID in format T00123460 (8 digits)
- *
- * @example
- * generateTransactionId([]) // Returns "T00123460" (random)
- * generateTransactionId([{id: "T00123460"}]) // Returns different random ID
+ * @param existingTransactions The existingTransactions parameter
  */
 export const generateTransactionId = (existingTransactions: any[] = []): string => {
     const existingIds = new Set(
@@ -37,13 +31,13 @@ export const generateTransactionId = (existingTransactions: any[] = []): string 
     const maxAttempts = 100;
 
     do {
-        // Generate random 8-digit number (10000000 to 99999999)
+        
         const randomNumber = Math.floor(Math.random() * 90000000) + 10000000;
         newId = `T${randomNumber}`;
         attempts++;
 
         if (attempts >= maxAttempts) {
-            // Fallback: use timestamp-based ID if we can't find unique random
+            
             const timestamp = Date.now().toString().slice(-8);
             newId = `T${timestamp}`;
             break;
@@ -54,15 +48,9 @@ export const generateTransactionId = (existingTransactions: any[] = []): string 
 };
 
 /**
- * Alias for generateTransactionId for backward compatibility
- * Generates a unique random transaction ID
+ * Executes the getNextTransactionId operation and modify the payload if necessary.
  *
- * @param {Array} existingTransactions - Array of existing transactions
- * @returns {string} Random transaction ID
- *
- * @example
- * const txns = [{ id: "T12345678" }, { id: "T87654321" }];
- * getNextTransactionId(txns) // Returns "T45678901" (random, unique)
+ * @param existingTransactions The existingTransactions parameter
  */
 export const getNextTransactionId = (existingTransactions: any[]): string => {
     return generateTransactionId(existingTransactions);

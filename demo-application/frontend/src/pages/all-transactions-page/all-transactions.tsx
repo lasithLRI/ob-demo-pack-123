@@ -16,7 +16,6 @@
  * under the License.
  */
 
-
 import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
 import PaymentAccountPageLayout from "../../layouts/payment-account-page-layout/payment-account-page-layout.tsx";
 import {Box, Button} from "@oxygen-ui/react";
@@ -24,6 +23,7 @@ import type {TableConfigs, TransactionData} from "../../hooks/config-interfaces.
 import {useState, useEffect} from "react";
 import TableComponent from "../../components/table-component.tsx";
 
+/** AllTransactionsProps implementation */
 interface AllTransactionsProps {
     name: string;
     transactions: TransactionData[];
@@ -31,47 +31,91 @@ interface AllTransactionsProps {
 }
 
 /**
- * @function AllTransactionsPage
- * @description A page component dedicated to displaying a paginated list of all
- * transaction data within the application layout. It handles state for pagination
- * and renders transaction details in a table, including credit/debit status.
+ * Executes the AllTransactionsPage operation and modify the payload if necessary.
+ *
+ * @param name            The name parameter
+ * @param transactions    The transactions parameter
+ * @param transactionTableHeaderData The transactionTableHeaderData parameter
  */
 const AllTransactionsPage = ({name, transactions,
                                  transactionTableHeaderData}: AllTransactionsProps) => {
 
     const itemsPerPage = 10;
 
+    /**
+     * Executes the getInitialPage operation and modify the payload if necessary.
+     */
     const getInitialPage = () => {
         const savedPage = sessionStorage.getItem('allTransactionsCurrentPage');
         return savedPage ? parseInt(savedPage, 10) : 1;
     };
     const [currentPage, setCurrentPage] = useState(getInitialPage);
     const totalPages = Math.ceil(transactions.length / itemsPerPage);
+    /**
+     * Executes the startIndex operation and modify the payload if necessary.
+     */
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const transactionsToDisplay = transactions.slice(startIndex, endIndex);
+    /**
+     * Executes the useEffect operation and modify the payload if necessary.
+     *
+     * @param (               The ( parameter
+     */
     useEffect(() => {
         sessionStorage.setItem('allTransactionsCurrentPage', currentPage.toString());
     }, [currentPage]);
+    /**
+     * Executes the useEffect operation and modify the payload if necessary.
+     *
+     * @param (               The ( parameter
+     */
     useEffect(() => {
         if (currentPage > totalPages && totalPages > 0) {
+            /**
+             * Executes the setCurrentPage operation and modify the payload if necessary.
+             *
+             * @param totalPages      The totalPages parameter
+             */
             setCurrentPage(totalPages);
         }
     }, [transactions, currentPage, totalPages]);
+    /**
+     * Executes the handlePageChange operation and modify the payload if necessary.
+     *
+     * @param newPage         The newPage parameter
+     */
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
+            /**
+             * Executes the setCurrentPage operation and modify the payload if necessary.
+             *
+             * @param newPage         The newPage parameter
+             */
             setCurrentPage(newPage);
-            // Scroll to top when page changes
+            
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
     }
+    /**
+     * Executes the handlePrevious operation and modify the payload if necessary.
+     */
     const handlePrevious = () => {
         if (currentPage > 1) {
+            /**
+             * Executes the handlePageChange operation and modify the payload if necessary.
+             */
             handlePageChange(currentPage - 1);
         }
     }
+    /**
+     * Executes the handleNext operation and modify the payload if necessary.
+     */
     const handleNext = () => {
         if (currentPage < totalPages) {
+            /**
+             * Executes the handlePageChange operation and modify the payload if necessary.
+             */
             handlePageChange(currentPage + 1);
         }
     }
@@ -88,7 +132,7 @@ const AllTransactionsPage = ({name, transactions,
                             tableType={"transaction"}
                             dataConfigs={transactionTableHeaderData}
                         />
-                        {/* Pagination Controls */}
+                        {}
                         {totalPages > 1 && (
                             <Box className="pagination-container" sx={{
                                 display: 'flex',
@@ -98,7 +142,7 @@ const AllTransactionsPage = ({name, transactions,
                                 marginTop: '2rem',
                                 flexWrap: 'wrap'
                             }}>
-                                {/* Previous Button */}
+                                {}
                                 {showPrevButton && (
                                     <Button
                                         onClick={handlePrevious}
@@ -112,7 +156,7 @@ const AllTransactionsPage = ({name, transactions,
                                     </Button>
                                 )}
 
-                                {/* Page Numbers */}
+                                {}
                                 <Box sx={{
                                     display: 'flex',
                                     gap: '0.5rem',
@@ -137,7 +181,7 @@ const AllTransactionsPage = ({name, transactions,
                                     ))}
                                 </Box>
 
-                                {/* Next Button */}
+                                {}
                                 {showNextButton && (
                                     <Button
                                         onClick={handleNext}
@@ -153,7 +197,7 @@ const AllTransactionsPage = ({name, transactions,
                             </Box>
                         )}
 
-                        {/* Page Info */}
+                        {}
                         {totalPages > 1 && (
                             <Box sx={{
                                 textAlign: 'center',

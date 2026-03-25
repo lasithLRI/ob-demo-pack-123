@@ -23,6 +23,7 @@ import PaymentForm from "./payment-form/payment-form.tsx";
 import type {BanksWithAccounts} from "../../hooks/use-config-context.ts";
 import { Card } from "@oxygen-ui/react";
 
+/** PaymentsPageProps implementation */
 interface PaymentsPageProps {
     appInfo: AppInfo
     banksWithAccounts: BanksWithAccounts[];
@@ -32,10 +33,12 @@ interface PaymentsPageProps {
 }
 
 /**
- * @function PaymentsPage
- * @description The main page component for handling payments. It sets up the overall
- * application layout and the specific payment page layout, then wraps the core
- * payment form within a Card component, passing necessary configuration and data.
+ * Executes the PaymentsPage operation and modify the payload if necessary.
+ *
+ * @param appInfo         The appInfo parameter
+ * @param banksWithAccounts The banksWithAccounts parameter
+ * @param payeeData       The payeeData parameter
+ * @param banksList       The banksList parameter
  */
 const PaymentsPage = ({appInfo,banksWithAccounts, payeeData,
                           banksList}:PaymentsPageProps) => {

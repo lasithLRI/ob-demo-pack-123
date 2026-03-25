@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.wso2.openbanking.demo.services;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
@@ -10,10 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 
-/**
- * Handles the OAuth authorization callback and routes the resulting access token
- * to the appropriate service depending on whether the flow was for accounts or payments.
- */
+/** AuthService implementation */
 public class AuthService {
 
     private final AccountService accountService;
@@ -33,18 +48,32 @@ public class AuthService {
         );
     }
 
-    /** Sets whether the current flow is for "accounts" or "payments". */
+    /**
+     * Executes the setRequestStatus operation and modify the payload if necessary.
+     *
+     * @param status          The status parameter
+     */
     public void setRequestStatus(String status) {
         this.requestStatus = status;
     }
 
-    /** Exchanges the authorization code for an access token and triggers post-auth processing. */
+    /**
+     * Executes the processAuthorizationCallback operation and modify the payload if necessary.
+     *
+     * @param code            The code parameter
+     * @throws AuthorizationException When an error occurs during the operation
+     */
     public void processAuthorizationCallback(String code) throws AuthorizationException {
         String accessToken = exchangeCodeForToken(code);
         handleAuthorizationSuccess(accessToken);
     }
 
-    /** Builds and sends the token exchange request, returning the raw access token string. */
+    /**
+     * Executes the exchangeCodeForToken operation and modify the payload if necessary.
+     *
+     * @param code            The code parameter
+     * @throws AuthorizationException When an error occurs during the operation
+     */
     private String exchangeCodeForToken(String code) throws AuthorizationException {
         try {
             String clientAssertion = JwtTokenService.getInstance().createClientAssertion(JwtUtils.generateJti());
@@ -60,7 +89,12 @@ public class AuthService {
         }
     }
 
-    /** Builds the URL-encoded token request body for the authorization_code grant. */
+    /**
+     * Executes the buildTokenRequestBody operation and modify the payload if necessary.
+     *
+     * @param code            The code parameter
+     * @param clientAssertion The clientAssertion parameter
+     */
     private String buildTokenRequestBody(String code, String clientAssertion) {
         return "grant_type=authorization_code" +
                 "&code=" + code +
@@ -71,14 +105,20 @@ public class AuthService {
                 "&redirect_uri=" + ConfigLoader.getRedirectUri();
     }
 
-    /** Extracts the access_token field from the token endpoint JSON response. */
+    /**
+     * Executes the parseAccessToken operation and modify the payload if necessary.
+     *
+     * @param response        The response parameter
+     */
     private String parseAccessToken(String response) {
         return new JSONObject(response).getString("access_token");
     }
 
     /**
-     * Passes the access token to the relevant service and triggers data persistence.
-     * Routes to account fetching or payment processing based on requestStatus.
+     * Executes the handleAuthorizationSuccess operation and modify the payload if necessary.
+     *
+     * @param accessToken     The accessToken parameter
+     * @throws AuthorizationException When an error occurs during the operation
      */
     private void handleAuthorizationSuccess(String accessToken) throws AuthorizationException {
         accountService.setAccessToken(accessToken);

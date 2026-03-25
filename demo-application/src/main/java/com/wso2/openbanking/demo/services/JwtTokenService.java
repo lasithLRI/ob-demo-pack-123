@@ -1,5 +1,22 @@
-package com.wso2.openbanking.demo.services;
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
+package com.wso2.openbanking.demo.services;
 
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 
@@ -16,11 +33,7 @@ import java.security.spec.PSSParameterSpec;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Singleton service that creates signed JWTs for OAuth flows.
- * Handles both client assertions (for token requests) and
- * request objects (for consent authorization).
- */
+/** JwtTokenService implementation */
 public final class JwtTokenService {
 
     private static final String SIGNING_KEY_PATH      = "/obsigning.key";
@@ -38,13 +51,6 @@ public final class JwtTokenService {
         this.privateKey = loadPrivateKey();
     }
 
-    /**
-     * Returns the singleton instance, creating it on the first call.
-     *
-     * @return the shared JwtTokenService instance.
-     * @throws GeneralSecurityException if the private key cannot be parsed.
-     * @throws IOException if the signing key file cannot be read.
-     */
     public static synchronized JwtTokenService getInstance()
             throws GeneralSecurityException, IOException {
         if (instance == null) {
@@ -53,16 +59,6 @@ public final class JwtTokenService {
         return instance;
     }
 
-    /**
-     * Creates a signed client assertion JWT for authenticating to the token endpoint.
-     * The JWT is signed using RSASSA-PSS / SHA-256 and is valid for five minutes
-     * from the time of creation.
-     *
-     * @param jti a unique identifier for this token, used to prevent replay attacks.
-     * @return a compact, signed JWT string in the form header.payload.signature.
-     * @throws GeneralSecurityException if signing fails.
-     * @throws IOException if the signing key cannot be read.
-     */
     public String createClientAssertion(String jti)
             throws GeneralSecurityException, IOException {
         long issuedAt = getCurrentTimeSeconds();
@@ -86,16 +82,6 @@ public final class JwtTokenService {
         return buildJwt(header.toJson(), payload.toJson());
     }
 
-    /**
-     * Creates a signed request object JWT carrying the consent ID for the authorization flow.
-     * The JWT is signed using RSASSA-PSS / SHA-256 and is valid for five minutes
-     * from the time of creation.
-     *
-     * @param consentId the consent ID returned by the bank after consent initiation.
-     * @return a compact, signed JWT string in the form header.payload.signature.
-     * @throws GeneralSecurityException if signing fails.
-     * @throws IOException if the signing key cannot be read.
-     */
     public String createRequestObject(String consentId)
             throws GeneralSecurityException {
         long currentTime = getCurrentTimeSeconds();
@@ -123,15 +109,6 @@ public final class JwtTokenService {
         return buildJwt(header.toJson(), payload.toJson());
     }
 
-    /**
-     * Base64URL-encodes the header and payload, then appends the PSS signature
-     * to produce a compact JWT string.
-     *
-     * @param headerJson  the serialized JWT header as a JSON string.
-     * @param payloadJson the serialized JWT payload as a JSON string.
-     * @return a compact JWT string in the form header.payload.signature.
-     * @throws GeneralSecurityException if signing fails.
-     */
     private String buildJwt(String headerJson, String payloadJson)
             throws GeneralSecurityException {
         String encodedHeader  = base64UrlEncode(headerJson.getBytes(StandardCharsets.UTF_8));
@@ -141,11 +118,10 @@ public final class JwtTokenService {
     }
 
     /**
-     * Signs the given data with the loaded private key using RSASSA-PSS / SHA-256.
+     * Executes the signData operation and modify the payload if necessary.
      *
-     * @param data the ASCII signing input, typically header.payload.
-     * @return the Base64URL-encoded PSS signature string.
-     * @throws GeneralSecurityException if the signing operation fails.
+     * @param data            The data parameter
+     * @throws GeneralSecurityException When an error occurs during the operation
      */
     private String signData(String data) throws GeneralSecurityException {
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
@@ -161,14 +137,6 @@ public final class JwtTokenService {
         return base64UrlEncode(signature.sign());
     }
 
-    /**
-     * Loads the RSA private key from the classpath signing key file.
-     *
-     * @return the parsed RSA PrivateKey.
-     * @throws NoSuchAlgorithmException if the RSA algorithm is unavailable.
-     * @throws InvalidKeySpecException if the key file content is malformed.
-     * @throws IOException if the signing key file cannot be found or read.
-     */
     private PrivateKey loadPrivateKey()
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         InputStream keyStream = JwtTokenService.class.getResourceAsStream(SIGNING_KEY_PATH);
@@ -179,19 +147,16 @@ public final class JwtTokenService {
     }
 
     /**
-     * Encodes bytes to a Base64URL string without padding, as required by the JWT spec.
+     * Executes the base64UrlEncode operation and modify the payload if necessary.
      *
-     * @param bytes the raw bytes to encode.
-     * @return a Base64URL-encoded string with no trailing padding characters.
+     * @param bytes           The bytes parameter
      */
     private String base64UrlEncode(byte[] bytes) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
     /**
-     * Returns the current time in seconds since the Unix epoch.
-     *
-     * @return the current Unix timestamp in seconds.
+     * Executes the getCurrentTimeSeconds operation and modify the payload if necessary.
      */
     private long getCurrentTimeSeconds() {
         return System.currentTimeMillis() / 1000;

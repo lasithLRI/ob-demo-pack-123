@@ -18,23 +18,33 @@
 
 import {Box, IconButton} from "@oxygen-ui/react";
 import { useNavigate } from "react-router-dom";
+
 // @ts-ignore
 import {ChevronLeftIcon} from "@oxygen-ui/react-icons";
 
+/** PageLayoutProps implementation */
 interface PageLayoutProps {
     children?: React.ReactNode;
     title: string;
 }
 
 /**
- * @function PaymentAccountPageLayout
- * @description A layout component that wraps content for pages like payments and account management.
- * It provides a standardized header with a dynamic title, a back button for navigation,
- * and uses a responsive Grid system to size the content area based on the page title.
+ * Executes the PaymentAccountPageLayout operation and modify the payload if necessary.
+ *
+ * @param children        The children parameter
+ * @param title           The title parameter
  */
 const PaymentAccountPageLayout = ({children,title}:PageLayoutProps)=>{
     const navigate = useNavigate();
+    /**
+     * Executes the handleBackNavigation operation and modify the payload if necessary.
+     */
     const handleBackNavigation = ()=>{
+        /**
+         * Executes the navigate operation and modify the payload if necessary.
+         *
+         * @param -1              The -1 parameter
+         */
         navigate(-1);
     }
     return (

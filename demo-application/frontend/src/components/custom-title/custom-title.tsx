@@ -17,10 +17,12 @@
  */
 
 import {Box, Button, Menu, MenuItem} from "@oxygen-ui/react";
+
 // @ts-ignore
 import { ChevronDownIcon } from "@oxygen-ui/react-icons";
 import React, { useState } from "react";
 
+/** TitleProps implementation */
 interface TitleProps {
     title: string;
     buttonName?: string;
@@ -29,10 +31,12 @@ interface TitleProps {
 }
 
 /**
- * @function CustomTitle
- * @description A reusable header component that displays a section `title`.
- * It optionally renders a dynamic `Button` (either contained or outlined)
- * which triggers an `onPress` callback, passing both the button's name and the title.
+ * Executes the CustomTitle operation and modify the payload if necessary.
+ *
+ * @param title           The title parameter
+ * @param buttonName      The buttonName parameter
+ * @param buttonType      The buttonType parameter
+ * @param onPress         The onPress parameter
  */
 const CustomTitle = ({title,buttonName,buttonType, onPress}:TitleProps)=>{
 
@@ -53,15 +57,41 @@ const CustomTitle = ({title,buttonName,buttonType, onPress}:TitleProps)=>{
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const openMenu = Boolean(anchorEl);
 
+    /**
+     * Executes the handleClick operation and modify the payload if necessary.
+     *
+     * @param event           The event parameter
+     */
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        /**
+         * Executes the setAnchorEl operation and modify the payload if necessary.
+         *
+         * @param event.currentTarget The event.currentTarget parameter
+         */
         setAnchorEl(event.currentTarget);
     };
 
+    /**
+     * Executes the handleClose operation and modify the payload if necessary.
+     */
     const handleClose = () => {
+        /**
+         * Executes the setAnchorEl operation and modify the payload if necessary.
+         *
+         * @param null            The null parameter
+         */
         setAnchorEl(null);
     };
 
+    /**
+     * Executes the handleMenuClick operation and modify the payload if necessary.
+     *
+     * @param action          The action parameter
+     */
     const handleMenuClick = (action: string) => {
+        /**
+         * Executes the handleClose operation and modify the payload if necessary.
+         */
         handleClose();
         onPress?.(action, title);
     };

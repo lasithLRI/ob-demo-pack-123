@@ -27,16 +27,17 @@ import {formatCurrency} from "../../../utility/number-formatter.ts";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+/** InfographicsContentProps implementation */
 interface InfographicsContentProps {
     total: number;
     chartInfo: ChartData & { labels: string[], cutout: string };
 }
 
 /**
- * @function InfographicsContent
- * @description A composite component that displays key financial overview data,
- * including the **Total Balance** (formatted currency) and an **Account Distribution**
- * Doughnut chart. It uses responsive styling and Chart.js to render the visual data.
+ * Executes the InfographicsContent operation and modify the payload if necessary.
+ *
+ * @param total           The total parameter
+ * @param chartInfo       The chartInfo parameter
  */
 export const InfographicsContent = ({total,chartInfo}:InfographicsContentProps)=>{
 

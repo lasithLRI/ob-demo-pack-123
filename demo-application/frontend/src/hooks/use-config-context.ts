@@ -22,10 +22,12 @@ import { useConfig } from "./use-config.ts";
 import { processAllBankDates } from "../utility/date-utils.ts";
 import { api } from "../utility/api.ts";
 
+/** AccountsWithPermissions implementation */
 export interface AccountsWithPermissions {
     [permissions: string]: Account[];
 }
 
+/** ChartData implementation */
 export interface ChartData {
     label: string;
     labels: string[];
@@ -36,17 +38,20 @@ export interface ChartData {
     cutout: string;
 }
 
+/** BanksWithAccounts implementation */
 export interface BanksWithAccounts {
     bank: Bank;
     accounts: Account[];
     total: number;
 }
 
+/** OverlayDataProp implementation */
 export interface OverlayDataProp {
     flag: boolean;
     overlayData: OverlayData;
 }
 
+/** OverlayData implementation */
 export interface OverlayData {
     title: string;
     context: string;
@@ -55,6 +60,9 @@ export interface OverlayData {
     onMainButtonClick: () => void;
 }
 
+/**
+ * Executes the useConfigContext operation and modify the payload if necessary.
+ */
 const useConfigContext = () => {
     const { data: configData, isLoading, refetch } = useConfig();
 
@@ -123,6 +131,12 @@ const useConfigContext = () => {
         });
     }, [processedBanks, configData]);
 
+    /**
+     * Executes the getAffectedAccounts operation and modify the payload if necessary.
+     *
+     * @param accountId       The accountId parameter
+     * @param bankName        The bankName parameter
+     */
     const getAffectedAccounts = async (
         accountId: string,
         bankName: string
@@ -138,9 +152,18 @@ const useConfigContext = () => {
         }
     };
 
+    /**
+     * Executes the revokeConsent operation and modify the payload if necessary.
+     *
+     * @param accountId       The accountId parameter
+     * @param bankName        The bankName parameter
+     */
     const revokeConsent = async (accountId: string, bankName: string): Promise<boolean> => {
         try {
             await api.delete(`revoke-consent?accountId=${accountId}&bankName=${bankName}`);
+            /**
+             * Executes the refetch operation and modify the payload if necessary.
+             */
             refetch();
             return true;
         } catch (error) {

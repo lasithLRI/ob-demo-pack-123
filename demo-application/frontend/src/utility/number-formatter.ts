@@ -17,10 +17,9 @@
  */
 
 /**
- * @function formatCurrency
- * @description Safely formats a number, string, null, or undefined value into a currency string
- * using 'en-US' locale and ensuring exactly two decimal places.
- * Invalid inputs are defaulted to '0.00'.
+ * Executes the formatCurrency operation and modify the payload if necessary.
+ *
+ * @param value           The value parameter
  */
 export const formatCurrency = (value: number | string | null | undefined): string => {
 

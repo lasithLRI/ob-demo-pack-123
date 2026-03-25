@@ -22,15 +22,31 @@ import { loadConfigFile } from "../utility/config-loader";
 import { api } from "../utility/api.ts";
 import { resolveImageUrl } from "../utility/image-utils.ts";
 
+/**
+ * Executes the useConfig operation and modify the payload if necessary.
+ */
 export const useConfig = () => {
     const [config, setConfig] = useState<Config | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshKey, setRefreshKey] = useState(0);
 
+    /**
+     * Executes the refetch operation and modify the payload if necessary.
+     */
     const refetch = () => setRefreshKey(k => k + 1);
 
+    /**
+     * Executes the useEffect operation and modify the payload if necessary.
+     *
+     * @param (               The ( parameter
+     */
     useEffect(() => {
+        /**
+         * Executes the setIsLoading operation and modify the payload if necessary.
+         *
+         * @param true            The true parameter
+         */
         setIsLoading(true);
         Promise.all([
             loadConfigFile(),
@@ -46,7 +62,6 @@ export const useConfig = () => {
                     ...(backendConfig ?? {})
                 };
 
-                // ── Patch user image ──────────────────────────────────────
                 if (merged.user?.image) {
                     merged.user = {
                         ...merged.user,
@@ -54,7 +69,6 @@ export const useConfig = () => {
                     };
                 }
 
-                // ── Patch user background image ───────────────────────────
                 if (merged.user?.background) {
                     merged.user = {
                         ...merged.user,
@@ -62,7 +76,6 @@ export const useConfig = () => {
                     };
                 }
 
-                // ── Patch bank images ─────────────────────────────────────
                 if (merged.banks) {
                     merged.banks = merged.banks.map((bank) => ({
                         ...bank,
@@ -70,6 +83,11 @@ export const useConfig = () => {
                     }));
                 }
 
+                /**
+                 * Executes the setConfig operation and modify the payload if necessary.
+                 *
+                 * @param merged          The merged parameter
+                 */
                 setConfig(merged);
             })
             .catch(setError)

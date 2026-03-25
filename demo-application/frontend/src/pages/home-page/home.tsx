@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -37,6 +37,7 @@ import TableComponent from "../../components/table-component.tsx";
 import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
 import { DeleteAccountModal } from "./delete-account-model.tsx";
 
+/** AccountsCentralLayoutProps implementation */
 interface AccountsCentralLayoutProps {
     children?: React.ReactNode;
     name: string;
@@ -51,9 +52,25 @@ interface AccountsCentralLayoutProps {
     overlayInformation: OverlayDataProp;
     transactionTableHeaderData?: TableConfigs[];
     standingOrdersTableHeaderData?: TableConfigs[];
-    onRefetch: () => void;  // ← add this
+    onRefetch: () => void;  
 }
 
+/**
+ * Executes the Home operation and modify the payload if necessary.
+ *
+ * @param name            The name parameter
+ * @param userInfo        The userInfo parameter
+ * @param total           The total parameter
+ * @param chartData       The chartData parameter
+ * @param banksWithAccounts The banksWithAccounts parameter
+ * @param transactions    The transactions parameter
+ * @param standingOrderList The standingOrderList parameter
+ * @param appInfo         The appInfo parameter
+ * @param overlayInformation The overlayInformation parameter
+ * @param transactionTableHeaderData The transactionTableHeaderData parameter
+ * @param onRefetch       The onRefetch parameter
+ * @param                 The  parameter
+ */
 const Home = ({
                   standingOrdersTableHeaderData, name, userInfo, total, chartData,
                   banksWithAccounts, transactions, standingOrderList, appInfo,
@@ -63,7 +80,15 @@ const Home = ({
     const navigate = useNavigate();
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
+    /**
+     * Executes the addAccount operation and modify the payload if necessary.
+     */
     const addAccount = () => {
+        /**
+         * Executes the navigate operation and modify the payload if necessary.
+         *
+         * @param `/$appInfo.route/accounts` The `/$appInfo.route/accounts` parameter
+         */
         navigate(`/${appInfo.route}/accounts`, {
             state: {
                 name: appInfo.applicationName,
@@ -71,22 +96,57 @@ const Home = ({
         });
     };
 
+    /**
+     * Executes the viewMore operation and modify the payload if necessary.
+     *
+     * @param title           The title parameter
+     */
     const viewMore = (title?: string) => {
         const route = title === "Latest Transactions" ? "transactions" : "standing-orders";
+        /**
+         * Executes the navigate operation and modify the payload if necessary.
+         *
+         * @param `/$appInfo.route/$route` The `/$appInfo.route/$route` parameter
+         */
         navigate(`/${appInfo.route}/${route}`);
     };
 
+    /**
+     * Executes the onButtonHandler operation and modify the payload if necessary.
+     *
+     * @param buttonName      The buttonName parameter
+     * @param title           The title parameter
+     */
     const onButtonHandler = (buttonName: string, title?: string) => {
         if (buttonName === "Add Account") {
+            /**
+             * Executes the addAccount operation and modify the payload if necessary.
+             */
             addAccount();
         } else if (buttonName === "Delete Account") {
+            /**
+             * Executes the setOpenDeleteModal operation and modify the payload if necessary.
+             *
+             * @param true            The true parameter
+             */
             setOpenDeleteModal(true);
         } else if (buttonName === "View More") {
+            /**
+             * Executes the viewMore operation and modify the payload if necessary.
+             *
+             * @param title           The title parameter
+             */
             viewMore(title);
         }
     };
 
+    /**
+     * Executes the handleAccountDeletedSuccess operation and modify the payload if necessary.
+     */
     const handleAccountDeletedSuccess = () => {
+        /**
+         * Executes the onRefetch operation and modify the payload if necessary.
+         */
         onRefetch();
     };
 

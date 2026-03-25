@@ -19,10 +19,12 @@
 import type {StandingOrders, TableConfigs, TransactionData} from "../hooks/config-interfaces.ts";
 import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@oxygen-ui/react";
 import {formatCurrency} from "../utility/number-formatter.ts";
+
 // @ts-ignore
 import {ArrowDownIcon, ArrowUpIcon} from "@oxygen-ui/react-icons";
 import {useMemo} from "react";
 
+/** TableComponentProps implementation */
 interface TableComponentProps {
     tableData: TransactionData[] | StandingOrders[];
     dataConfigs?: TableConfigs[];
@@ -31,49 +33,52 @@ interface TableComponentProps {
 }
 
 /**
- * Formats transaction ID to ensure consistent 8-digit format
- * @param id - The transaction ID (e.g., "T001" or "T00123460")
- * @returns Formatted ID with exactly 8 digits (e.g., "T00123460")
+ * Executes the formatTransactionId operation and modify the payload if necessary.
+ *
+ * @param id              The id parameter
  */
 const formatTransactionId = (id: string): string => {
-    // Extract the numeric part from the ID
+    
     const match = id.match(/^([A-Z]+)(\d+)$/);
     if (match) {
-        const prefix = match[1]; // e.g., "T"
-        const number = match[2]; // e.g., "001" or "123460"
-        // Pad to 8 digits
+        const prefix = match[1]; 
+        const number = match[2]; 
+        
         const paddedNumber = number.padStart(8, '0');
         return `${prefix}${paddedNumber}`;
     }
-    return id; // Return original if format doesn't match
+    return id; 
 };
 
 const TableComponent =
     ({tableData,dataConfigs,tableType, dataLimit=4}:TableComponentProps)=>{
 
-        // Sort data: latest transactions/standing orders on top
         const sortedData = useMemo(() => {
             if (tableType === "transaction") {
-                // Sort transactions by date (most recent first)
-                // Dates are already in YYYY-MM-DD format from date-utils processing
+                
                 return [...tableData].sort((a, b) => {
                     const dateA = 'date' in a ? a.date : '0';
                     const dateB = 'date' in b ? b.date : '0';
-                    // Compare as strings in YYYY-MM-DD format (works correctly)
-                    return dateB.localeCompare(dateA); // Descending order (newest first)
+                    
+                    return dateB.localeCompare(dateA); 
                 });
             } else if (tableType === "standing-order") {
-                // Sort standing orders by nextDate (soonest first)
+                
                 return [...tableData].sort((a, b) => {
                     const dateA = 'nextDate' in a ? (a as StandingOrders).nextDate : '0';
                     const dateB = 'nextDate' in b ? (b as StandingOrders).nextDate : '0';
-                    // Compare as strings in YYYY-MM-DD format
-                    return dateA.localeCompare(dateB); // Ascending order (soonest first)
+                    
+                    return dateA.localeCompare(dateB); 
                 });
             }
             return tableData;
         }, [tableData, tableType]);
 
+        /**
+         * Executes the renderAmount operation and modify the payload if necessary.
+         *
+         * @param dataRow         The dataRow parameter
+         */
         const renderAmount = (dataRow: TransactionData | StandingOrders) => {
             const currency = 'currency' in dataRow ? dataRow.currency : '';
             const amount = 'amount' in dataRow ? dataRow.amount : '0';
@@ -81,13 +86,21 @@ const TableComponent =
             return formattedAmount;
         };
 
+        /**
+         * Executes the renderCellValue operation and modify the payload if necessary.
+         *
+         * @param dataRow         The dataRow parameter
+         * @param valuesData      The valuesData parameter
+         */
         const renderCellValue = (dataRow: TransactionData | StandingOrders, valuesData: string) => {
             if (valuesData === "amount") {
                 return renderAmount(dataRow);
             }
 
-            // Format transaction ID if it's the id field in a transaction
             if (valuesData === "id" && tableType === "transaction") {
+                /**
+                 * Executes the value operation and modify the payload if necessary.
+                 */
                 const value = (dataRow as any)[valuesData];
                 return formatTransactionId(value);
             }
@@ -126,6 +139,11 @@ const TableComponent =
                         </TableHead>
                         <TableBody sx={{backgroundColor:'white'}}>
                             {sortedData.slice(0, dataLimit).map((dataRow:TransactionData|StandingOrders, index:number)=>{
+                                /**
+                                 * Executes the isTransactionData operation and modify the payload if necessary.
+                                 *
+                                 * @param data            The data parameter
+                                 */
                                 const isTransactionData = (data: TransactionData | StandingOrders): data is TransactionData => {
                                     return 'creditDebitStatus' in data;
                                 };

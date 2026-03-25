@@ -1,24 +1,31 @@
-package com.wso2.openbanking.demo.models;
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
+package com.wso2.openbanking.demo.models;
 
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 
-/**
- * Represents the display information for a bank available in the add account flow.
- */
+/** AddAccountBankInfo implementation */
 public class AddAccountBankInfo {
     String name;
     String image;
     boolean flag;
 
-
-
-    /**
-     * Constructs an AddAccountBankInfo with the specified name and image.
-     *
-     * @param name  the display name of the bank
-     * @param image the image URL or path representing the bank's logo
-     */
     public AddAccountBankInfo(String name, String image) {
         this.name = name;
         this.image = image;
@@ -28,36 +35,30 @@ public class AddAccountBankInfo {
     }
 
     /**
-     * Returns the display name of the bank.
-     *
-     * @return the bank name
+     * Executes the getName operation and modify the payload if necessary.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Sets the display name of the bank.
+     * Executes the setName operation and modify the payload if necessary.
      *
-     * @param name the bank name to set
+     * @param name            The name parameter
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * Returns the image URL or path representing the bank's logo.
-     *
-     * @return the bank image
+     * Executes the getImage operation and modify the payload if necessary.
      */
     public String getImage() {
         return image;
     }
 
     /**
-     * Returns whether this bank is supported for account addition.
-     *
-     * @return true if this bank is the configured mock bank
+     * Executes the isFlag operation and modify the payload if necessary.
      */
     public boolean isFlag() {
         return flag;

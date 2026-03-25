@@ -16,23 +16,27 @@
  * under the License.
  */
 
+/** User implementation */
 export interface User {
     name: string;
     image: string;
     background: string;
 }
 
+/** DynamicBanks implementation */
 export interface DynamicBanks {
     name: string;
     route: string;
     startingAccountNumbers: string;
 }
 
+/** AppInfo implementation */
 export interface AppInfo {
     route: string;
     applicationName: string;
 }
 
+/** Bank implementation */
 export interface Bank {
     name: string;
     image: string;
@@ -40,29 +44,32 @@ export interface Bank {
     color: string;
     border: string;
     startingAccountNumbers: string;
-    accounts:Account[];
+    accounts: Account[];
     route: string;
     bankThemeId: number;
-    standingOrders:StandingOrders[];
-
+    standingOrders: StandingOrders[];
+    flag: boolean;
 }
 
+/** Account implementation */
 export interface Account {
     id: string;
     bank: string;
     name: string;
     balance: number;
-    transactions:TransactionData[];
-    notPermitedActions?:string[];
+    transactions: TransactionData[];
+    notPermitedActions?: string[];
 }
 
+/** Payee implementation */
 export interface Payee {
     name: string;
     bank: string;
     accountNumber: string;
 }
 
-export interface TransactionData{
+/** TransactionData implementation */
+export interface TransactionData {
     "id": string,
     "date": string,
     "reference": string,
@@ -73,7 +80,8 @@ export interface TransactionData{
     "creditDebitStatus": string
 }
 
-export interface StandingOrders{
+/** StandingOrders implementation */
+export interface StandingOrders {
     "id": string,
     "reference": string,
     "bank": string,
@@ -83,12 +91,14 @@ export interface StandingOrders{
     "currency": string,
 }
 
+/** Step implementation */
 export interface Step {
     id: string;
     name: string;
     component: string;
 }
 
+/** UseCase implementation */
 export interface UseCase {
     id: string;
     title: string;
@@ -97,21 +107,24 @@ export interface UseCase {
     steps: Step[];
 }
 
+/** Type implementation */
 export interface Type {
     id: string;
     title: string;
     useCases: UseCase[];
 }
 
-export interface TableConfigs{
-    [key: string]: string;
-
-}
-
-export interface CustomColors{
+/** TableConfigs implementation */
+export interface TableConfigs {
     [key: string]: string;
 }
 
+/** CustomColors implementation */
+export interface CustomColors {
+    [key: string]: string;
+}
+
+/** LocalConfig implementation */
 export interface LocalConfig {
     user: User;
     name: AppInfo;
@@ -122,6 +135,7 @@ export interface LocalConfig {
     accountNumbersToAdd: string[];
 }
 
+/** ConfigResponse implementation */
 export interface ConfigResponse {
     banks: Bank[];
     payees: Payee[];

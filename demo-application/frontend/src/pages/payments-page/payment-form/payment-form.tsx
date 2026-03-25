@@ -17,6 +17,7 @@
  */
 
 import {Controller, useForm} from "react-hook-form";
+import type { FieldError } from "react-hook-form";
 import {Box, Button, FormControl, MenuItem, OutlinedInput, Select} from "@oxygen-ui/react";
 import {NumericFormat} from "react-number-format";
 import {useState, useEffect, useRef} from "react";
@@ -30,6 +31,7 @@ import type {BanksWithAccounts} from "../../../hooks/use-config-context.ts";
 import { RedirectionComponent } from "../../../components/redirection-component.tsx";
 import { api } from "../../../utility/api.ts";
 
+/** PaymentFormData implementation */
 export interface PaymentFormData {
     userAccount: string;
     payeeAccount: string;
@@ -39,22 +41,37 @@ export interface PaymentFormData {
     appInfo: AppInfo;
 }
 
+/** PaymentFormProps implementation */
 interface PaymentFormProps {
     banksWithAllAccounts: BanksWithAccounts[];
     payeeData: Payee[];
     banksList: Bank[];
 }
 
-export const ErrorMessage = ({error}:{error:any})=>{
+/** LoadPaymentResponse implementation */
+interface LoadPaymentResponse {
+    [key: string]: unknown;
+}
+
+/** PaymentResponse implementation */
+interface PaymentResponse {
+    redirect?: string;
+}
+
+/**
+ * Executes the ErrorMessage operation and modify the payload if necessary.
+ */
+export const ErrorMessage = ({ error }: { error: FieldError | undefined }) => {
     if (!error) return null;
     return <p className={"error-message-payments"}>{error.message}</p>
 }
 
 /**
- * @function PaymentForm
- * @description Manages the user interface, state, and validation for initiating a new payment.
- * It collects payment details and, upon confirmation, redirects the user to the
- * corresponding bank's authorization flow (via `react-router` state).
+ * Executes the PaymentForm operation and modify the payload if necessary.
+ *
+ * @param banksWithAllAccounts The banksWithAllAccounts parameter
+ * @param payeeData       The payeeData parameter
+ * @param banksList       The banksList parameter
  */
 const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormProps) => {
 
@@ -74,73 +91,141 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
     const [formDataToSubmit, setFormDataToSubmit] = useState<PaymentFormData | null>(null);
     const [isRedirecting, setIsRedirecting] = useState(false);
 
-    // Store timer ID in a ref so it can be cleared on unmount
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Cleanup timer on unmount to prevent navigate calls on unmounted component
+    /**
+     * Executes the useEffect operation and modify the payload if necessary.
+     *
+     * @param (               The ( parameter
+     */
     useEffect(() => {
         return () => {
             if (timerRef.current) {
+                /**
+                 * Executes the clearTimeout operation and modify the payload if necessary.
+                 *
+                 * @param timerRef.current The timerRef.current parameter
+                 */
                 clearTimeout(timerRef.current);
             }
         };
     }, []);
 
-    // Load initial payment data
+    /**
+     * Executes the useEffect operation and modify the payload if necessary.
+     *
+     * @param (               The ( parameter
+     */
     useEffect(() => {
-        api.get<any>('load-payment')
+        api.get<LoadPaymentResponse>('load-payment')
             .then(data => {
                 console.log('Loaded payment data from /load-payment:', data);
             })
-            .catch(err => {
+            .catch((err: unknown) => {
                 console.error('Failed to load payment data', err);
             });
     }, []);
 
+    /**
+     * Executes the onSubmit operation and modify the payload if necessary.
+     *
+     * @param data            The data parameter
+     */
     const onSubmit = (data: PaymentFormData) => {
+        /**
+         * Executes the setFormDataToSubmit operation and modify the payload if necessary.
+         *
+         * @param data            The data parameter
+         */
         setFormDataToSubmit(data);
+        /**
+         * Executes the setIsConfirming operation and modify the payload if necessary.
+         *
+         * @param true            The true parameter
+         */
         setIsConfirming(true);
     };
 
+    /**
+     * Executes the handleConfirmedAndRedirect operation and modify the payload if necessary.
+     */
     const handleConfirmedAndRedirect = async () => {
         if (formDataToSubmit) {
+            /**
+             * Executes the setIsConfirming operation and modify the payload if necessary.
+             *
+             * @param false           The false parameter
+             */
             setIsConfirming(false);
+            /**
+             * Executes the setIsRedirecting operation and modify the payload if necessary.
+             *
+             * @param true            The true parameter
+             */
             setIsRedirecting(true);
             const bankName = formDataToSubmit.userAccount.split('-')[0];
             const target = banksList.find((bank) => bank.name === bankName);
             if (!target) {
                 console.log(`Bank "${bankName}" not found in banksList`);
+                /**
+                 * Executes the setIsRedirecting operation and modify the payload if necessary.
+                 *
+                 * @param false           The false parameter
+                 */
                 setIsRedirecting(false);
                 return;
             }
 
             try {
                 const payload = {
-                    userAccount: formDataToSubmit.userAccount, // Send the full BankName-AccountID expected by the backend
+                    userAccount: formDataToSubmit.userAccount,
                     payeeAccount: formDataToSubmit.payeeAccount,
                     currency: formDataToSubmit.currency,
                     amount: formDataToSubmit.amount.toString(),
                     reference: formDataToSubmit.reference
                 };
 
-                const res = await api.post<any>('payment', payload);
+                const res = await api.post<PaymentResponse>('payment', payload);
                 if (res && res.redirect) {
                     timerRef.current = setTimeout(() => {
-                        window.location.href = res.redirect;
+                        window.location.href = res.redirect as string;
                     }, 1000);
                 } else {
                     console.error("No redirect URL found in the response.", res);
+                    /**
+                     * Executes the setIsRedirecting operation and modify the payload if necessary.
+                     *
+                     * @param false           The false parameter
+                     */
                     setIsRedirecting(false);
                 }
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error("Payment API error:", err);
+                /**
+                 * Executes the setIsRedirecting operation and modify the payload if necessary.
+                 *
+                 * @param false           The false parameter
+                 */
                 setIsRedirecting(false);
             }
         }
     };
 
+    /**
+     * Executes the handleCancelConfirmation operation and modify the payload if necessary.
+     */
     const handleCancelConfirmation = () => {
+        /**
+         * Executes the setIsConfirming operation and modify the payload if necessary.
+         *
+         * @param false           The false parameter
+         */
         setIsConfirming(false);
+        /**
+         * Executes the setFormDataToSubmit operation and modify the payload if necessary.
+         *
+         * @param null            The null parameter
+         */
         setFormDataToSubmit(null);
     };
 
@@ -171,12 +256,22 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
                                 }}
                                 error={!!errors.userAccount}>
                             {banksWithAllAccounts.map((bankWithAccounts) =>
-                                bankWithAccounts.accounts.map((account) => (
-                                    <MenuItem key={`${bankWithAccounts.bank.name}-${account.id}`}
-                                              value={`${bankWithAccounts.bank.name}-${account.id}`}>
-                                        {bankWithAccounts.bank.name}-{account.id}
-                                    </MenuItem>
-                                ))
+                                bankWithAccounts.accounts.map((account) => {
+                                    const isEnabled = bankWithAccounts.bank.flag;
+                                    return (
+                                        <MenuItem
+                                            key={`${bankWithAccounts.bank.name}-${account.id}`}
+                                            value={`${bankWithAccounts.bank.name}-${account.id}`}
+                                            disabled={!isEnabled}
+                                            style={{
+                                                opacity: isEnabled ? 1 : 0.4,
+                                                cursor: isEnabled ? 'pointer' : 'not-allowed'
+                                            }}
+                                        >
+                                            {bankWithAccounts.bank.name}-{account.id}
+                                        </MenuItem>
+                                    );
+                                })
                             )}
                         </Select>
                     )}/>

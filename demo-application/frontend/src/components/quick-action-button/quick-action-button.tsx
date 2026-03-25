@@ -20,6 +20,7 @@ import { IconButton } from "@oxygen-ui/react";
 import * as React from "react";
 import '../components.scss'
 
+/** ActionButtonProps implementation */
 interface ActionButtonProps {
     icon?: React.ReactNode;
     name?: string;
@@ -27,11 +28,11 @@ interface ActionButtonProps {
 }
 
 /**
- * @function QuickActionButton
- * @description A reusable, styled component representing a quick action button
- * with an optional icon and name. It triggers an `onClick` handler, passing
- * the button's lowercase, concatenated name (e.g., "Pay Bills" becomes "paybills")
- * as the target path for navigation, and is disabled based on the button name.
+ * Executes the QuickActionButton operation and modify the payload if necessary.
+ *
+ * @param icon            The icon parameter
+ * @param name            The name parameter
+ * @param onClick         The onClick parameter
  */
 const QuickActionButton = ({icon,name, onClick} : ActionButtonProps)=>{
     if (!onClick) return null;

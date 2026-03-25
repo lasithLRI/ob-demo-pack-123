@@ -20,7 +20,7 @@ lsof -ti:8000 | xargs kill -9 2>/dev/null || true
 
 # Start HTTP server from BASE_URL so Docker can fetch all configuration files
 cd "$BASE_URL"
-python3 -m http.server 8000 &
+python -m http.server 8000 &
 SERVER_PID=$!
 sleep 2
 echo "HTTP server started (PID: $SERVER_PID) serving: $BASE_URL"
@@ -101,7 +101,7 @@ echo "Docker compose started"
 
 # Wait for obam container to be ready before deploying WAR
 echo "Waiting for obam to be ready..."
-until docker exec obam test -d '/home/wso2carbon/wso2am-4.5.0/repository/deployment/server/webapps'; do
+until docker logs obam 2>&1 | grep -q "Pass-through HTTPS Listener started on 0.0.0.0:8243"; do
     echo "  still waiting..."
     sleep 5
 done
@@ -110,7 +110,7 @@ echo "obam is ready!"
 # Replace api#fs#backend WAR in running container
 docker exec obam rm -f '/home/wso2carbon/wso2am-4.5.0/repository/deployment/server/webapps/api#fs#backend.war'
 docker exec obam rm -rf '/home/wso2carbon/wso2am-4.5.0/repository/deployment/server/webapps/api#fs#backend'
-docker cp "$BASE_URL/configuration-files/api-fs-backend.war" obam:'/home/wso2carbon/wso2am-4.5.0/repository/deployment/server/webapps/api#fs#backend.war'
+docker cp "$BASE_URL/configuration-files/api#fs#backend.war" obam:'/home/wso2carbon/wso2am-4.5.0/repository/deployment/server/webapps/api#fs#backend.war'
 echo "api#fs#backend.war deployed to obam"
 
 echo "──────────────────────────────────────────"

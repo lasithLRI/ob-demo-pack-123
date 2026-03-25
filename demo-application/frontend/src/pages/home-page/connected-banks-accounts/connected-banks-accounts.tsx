@@ -18,6 +18,7 @@
 
 import {Accordion, AccordionDetails, AccordionSummary, Card, Grid, Table, TableBody, TableCell, TableRow,
     Typography} from "@oxygen-ui/react";
+
 // @ts-ignore
 import {ChevronDownIcon} from "@oxygen-ui/react-icons";
 import type {BanksWithAccounts} from "../../../hooks/use-config-context.ts";
@@ -27,16 +28,11 @@ import CustomTitle from "../../../components/custom-title/custom-title.tsx";
 import './connected-banks-accounts.scss'
 import {useMediaQuery, useTheme} from "@mui/material";
 
+/** ConnectedBanksAccountsProps implementation */
 interface ConnectedBanksAccountsProps{
     bankAndAccountsInfo: BanksWithAccounts[];
 }
 
-/**
- * @function ConnectedBanksAccounts
- * @description Renders a comprehensive view of all connected financial institutions
- * and their respective accounts. It displays an overview of bank totals using Cards
- * and details individual accounts within responsive Accordion components.
- */
 const ConnectedBanksAccounts=
     ({bankAndAccountsInfo}:ConnectedBanksAccountsProps)=>{
 

@@ -21,6 +21,7 @@ import {Grid, useMediaQuery, useTheme} from "@mui/material";
 import {Box} from "@oxygen-ui/react";
 import HeroSection from "../../pages/home-page/hero-section/hero-section.tsx";
 
+/** HomePageLayoutProps implementation */
 interface HomePageLayoutProps {
     children?: React.ReactNode;
     userInfo: User;
@@ -28,10 +29,11 @@ interface HomePageLayoutProps {
 }
 
 /**
- * @function HomePageLayout
- * @description The structural component for the application's main dashboard.
- * It consistently places the **HeroSection** (user greeting and quick actions)
- * at the top and wraps the main content (`children`) below it, applying responsive padding.
+ * Executes the HomePageLayout operation and modify the payload if necessary.
+ *
+ * @param children        The children parameter
+ * @param userInfo        The userInfo parameter
+ * @param appInfo         The appInfo parameter
  */
 const HomePageLayout = ({children,userInfo, appInfo}:HomePageLayoutProps)=>{
     const isLargeScreen = useMediaQuery(useTheme().breakpoints.down('sm'));

@@ -17,6 +17,7 @@
  */
 
 import "../home.scss"
+
 // @ts-ignore
 import {ArrowLeftArrowRightIcon, UserGroupIcon, ClockAsteriskIcon, BoltIcon} from '@oxygen-ui/react-icons';
 import {Box, Grid} from "@oxygen-ui/react";
@@ -25,28 +26,24 @@ import { useNavigate} from "react-router-dom";
 import type {AppInfo, User} from "../../../hooks/config-interfaces.ts";
 import QuickActionButton from "../../../components/quick-action-button/quick-action-button.tsx";
 
-/**
- * A responsive dashboard header component that displays a personalized, time-of-day-sensitive
- * greeting and user avatar. It renders a row of quick-access action buttons (Payments, Transfer, etc.)
- * which navigate the user based on the configured app route. The layout adapts for mobile screens.
- */
-
+/** ActionButton implementation */
 interface ActionButton {
     icon: React.ReactNode;
     name: string;
     route: string;
 }
 
+/** HeroSectionProps implementation */
 interface HeroSectionProps {
     userInfo: User;
     appInfo: AppInfo;
 }
 
 /**
- * @function HeroSection
- * @description The top dashboard component that displays a personalized, time-sensitive greeting
- * and a row of quick-access action buttons (e.g., Pay Bills, Transfer).
- * The layout and component rendering are dynamically adjusted based on screen size (responsiveness).
+ * Executes the HeroSection operation and modify the payload if necessary.
+ *
+ * @param userInfo        The userInfo parameter
+ * @param appInfo         The appInfo parameter
  */
 const HeroSection = ({userInfo, appInfo}:HeroSectionProps) => {
     const isLargeScreen = useMediaQuery(useTheme().breakpoints.down('md'));
@@ -61,12 +58,25 @@ const HeroSection = ({userInfo, appInfo}:HeroSectionProps) => {
         {icon: <ClockAsteriskIcon size={'medium'}/>, name: "Schedule", route: "standing-orders"},
         {icon: <UserGroupIcon size={'medium'}/>, name: "Payees", route: "payments"},
     ];
+    /**
+     * Executes the onClickHandlerActionButtons operation and modify the payload if necessary.
+     *
+     * @param pathToOrName    The pathToOrName parameter
+     */
     const onClickHandlerActionButtons = (pathToOrName:string)=>{
         const button = actionButtons.find(b => b.name === pathToOrName);
         const routePath = button ? button.route : "payments";
         const absolutePath = "/"+appInfo.route+"/"+routePath;
+        /**
+         * Executes the navigate operation and modify the payload if necessary.
+         *
+         * @param absolutePath    The absolutePath parameter
+         */
         navigate(absolutePath);
     }
+    /**
+     * Executes the greetingSelection operation and modify the payload if necessary.
+     */
     const greetingSelection = () => {
         const currentHour = new Date().getHours();
         if (currentHour >= 5 && currentHour < 12) {
