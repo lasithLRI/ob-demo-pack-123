@@ -75,7 +75,7 @@ public final class PaymentService {
      * @throws AuthorizationException When an error occurs during the operation
      */
     public String processPaymentRequest(Payment payment) throws AuthorizationException {
-        this.currentPayment = payment;
+        this.currentPayment = new Payment(payment);
         try {
             String token = oauthService.getToken("payments openid");
             String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payment-consents";

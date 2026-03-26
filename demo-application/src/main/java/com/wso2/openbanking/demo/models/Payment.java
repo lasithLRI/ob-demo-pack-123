@@ -26,12 +26,12 @@ public class Payment {
     private String amount;
     private String reference;
 
-    public Payment(String userAccount, String payeeAccount, String currency, String amount, String reference) {
-        this.userAccount = userAccount;
-        this.payeeAccount = payeeAccount;
-        this.currency = currency;
-        this.amount = amount;
-        this.reference = reference;
+    public Payment(Payment other) {
+        this.userAccount = other.userAccount;
+        this.payeeAccount = other.payeeAccount;
+        this.amount = other.amount;
+        this.currency = other.currency;
+        this.reference = other.reference;
     }
 
     public Payment() {
