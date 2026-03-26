@@ -22,7 +22,6 @@ import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.exceptions.PaymentException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
-import com.wso2.openbanking.demo.service.serviceIMPLs.HttpTlsClient;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.JwtUtils;
 import org.json.JSONException;

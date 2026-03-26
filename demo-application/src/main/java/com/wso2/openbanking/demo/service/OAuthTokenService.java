@@ -20,7 +20,6 @@ package com.wso2.openbanking.demo.service;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
-import com.wso2.openbanking.demo.service.serviceIMPLs.HttpTlsClient;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.JwtUtils;
 import org.json.JSONException;
@@ -32,10 +31,10 @@ import java.security.GeneralSecurityException;
 /** OAuthTokenService implementation */
 public final class OAuthTokenService {
 
-    private final HttpTlsClientInterface client;
+    private final HttpTlsClient client;
     private final JwtTokenService jwtTokenService;
 
-    public OAuthTokenService(HttpTlsClientInterface client) throws GeneralSecurityException, IOException {
+    public OAuthTokenService(HttpTlsClient client) throws GeneralSecurityException, IOException {
         // Constructed here — not passed in
         try {
             this.client = new HttpTlsClient(

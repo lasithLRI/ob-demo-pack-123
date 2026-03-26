@@ -16,13 +16,12 @@
  * under the License.
  */
 
-package com.wso2.openbanking.demo.service.serviceIMPLs;
+package com.wso2.openbanking.demo.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.models.*;
-import com.wso2.openbanking.demo.service.BankInfoInterface;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /** BankInfoService implementation */
-public final class BankInfoService implements BankInfoInterface {
+public final class BankInfoService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final String CONFIG_FILE = "config.json";

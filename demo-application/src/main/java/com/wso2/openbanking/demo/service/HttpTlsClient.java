@@ -16,24 +16,22 @@
  * under the License.
  */
 
-package com.wso2.openbanking.demo.service.serviceIMPLs;
+package com.wso2.openbanking.demo.service;
 
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.http.AuthUrlBuilder;
 import com.wso2.openbanking.demo.http.HttpConnection;
 import com.wso2.openbanking.demo.http.SSLContextFactory;
-import com.wso2.openbanking.demo.service.HttpTlsClientInterface;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.util.UUID;
 
-import javax.net.ssl.SSLContext;
-
 /** HttpTlsClient implementation */
-public final class HttpTlsClient implements HttpTlsClientInterface {
+public final class HttpTlsClient {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpTlsClient.class);
 

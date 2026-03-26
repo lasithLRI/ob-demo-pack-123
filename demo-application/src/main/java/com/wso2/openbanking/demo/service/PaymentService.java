@@ -23,8 +23,6 @@ import com.wso2.openbanking.demo.exceptions.PaymentException;
 import com.wso2.openbanking.demo.models.Account;
 import com.wso2.openbanking.demo.models.Payment;
 import com.wso2.openbanking.demo.models.Transaction;
-import com.wso2.openbanking.demo.service.serviceIMPLs.BankInfoService;
-import com.wso2.openbanking.demo.service.serviceIMPLs.HttpTlsClient;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import org.json.JSONObject;
 
@@ -44,14 +42,14 @@ public final class PaymentService {
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static final Random RANDOM = new Random();
-    private final BankInfoInterface bankInfoService;
+    private final BankInfoService bankInfoService;
     private final OAuthTokenService oauthService;
-    private final HttpTlsClientInterface client;
+    private final HttpTlsClient client;
     private Payment currentPayment;
     private String currentConsentId;
 
 
-    private PaymentService(BankInfoInterface bankInfoService, HttpTlsClientInterface client, OAuthTokenService oauthService) {
+    private PaymentService(BankInfoService bankInfoService, HttpTlsClient client, OAuthTokenService oauthService) {
         this.bankInfoService = bankInfoService;
         this.client = client;
         this.oauthService = oauthService;
@@ -61,8 +59,8 @@ public final class PaymentService {
      * Static factory — handles GeneralSecurityException/IOException before construction.
      * Use this instead of new PaymentService(...).
      */
-    public static PaymentService create(BankInfoInterface bankInfoService,
-                                        HttpTlsClientInterface client)
+    public static PaymentService create(BankInfoService bankInfoService,
+                                        HttpTlsClient client)
             throws GeneralSecurityException, IOException {
         OAuthTokenService oauthService = new OAuthTokenService(client);
         return new PaymentService(bankInfoService, client, oauthService);

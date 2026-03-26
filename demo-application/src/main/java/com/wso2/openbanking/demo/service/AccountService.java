@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 /** AccountService implementation */
 public final class AccountService {
 
-    private final BankInfoInterface bankInfoService;
-    private final HttpTlsClientInterface client;
+    private final BankInfoService bankInfoService;
+    private final HttpTlsClient client;
     private final OAuthTokenService oauthService;
     private String accessToken;
     private String currentConsentId;
@@ -43,8 +43,8 @@ public final class AccountService {
      * Private constructor — never throws, so EI_EXPOSE_REP2 is not triggered.
      * All fields assigned cleanly with no exception risk after assignment.
      */
-    private AccountService(BankInfoInterface bankInfoService,
-                           HttpTlsClientInterface client,
+    private AccountService(BankInfoService bankInfoService,
+                           HttpTlsClient client,
                            OAuthTokenService oauthService) {
         this.bankInfoService = bankInfoService;
         this.client = client;
@@ -55,8 +55,8 @@ public final class AccountService {
      * Static factory method — handles all throwing logic before construction.
      * Use this instead of new AccountService(...).
      */
-    public static AccountService create(BankInfoInterface bankInfoService,
-                                        HttpTlsClientInterface client)
+    public static AccountService create(BankInfoService bankInfoService,
+                                        HttpTlsClient client)
             throws BankInfoLoadException {
         try {
             OAuthTokenService oauthService = new OAuthTokenService(client);
