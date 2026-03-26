@@ -348,7 +348,9 @@ public final class BankInfoService implements BankInfoInterface {
     /**
      * Executes the getBanks operation and modify the payload if necessary.
      */
-    public List<Bank> getBanks() { return banks; }
+    public List<Bank> getBanks() {
+        return banks == null ? null : new ArrayList<>(banks);
+    }
 
     public void addBank(Bank bank) { this.banks.add(bank); }
 
