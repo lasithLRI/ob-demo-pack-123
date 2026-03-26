@@ -44,18 +44,28 @@ public final class PaymentService {
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static final Random RANDOM = new Random();
-    private final BankInfoService bankInfoService;
+    private final BankInfoInterface bankInfoService;
     private final OAuthTokenService oauthService;
-    private final HttpTlsClient client;
+    private final HttpTlsClientInterface client;
     private Payment currentPayment;
     private String currentConsentId;
 
 
-    public PaymentService(BankInfoService bankInfoService, HttpTlsClient client)
-            throws GeneralSecurityException, IOException {
+    private PaymentService(BankInfoInterface bankInfoService, HttpTlsClientInterface client, OAuthTokenService oauthService) {
         this.bankInfoService = bankInfoService;
         this.client = client;
-        this.oauthService = new OAuthTokenService(client);
+        this.oauthService = oauthService;
+    }
+
+    /**
+     * Static factory — handles GeneralSecurityException/IOException before construction.
+     * Use this instead of new PaymentService(...).
+     */
+    public static PaymentService create(BankInfoInterface bankInfoService,
+                                        HttpTlsClientInterface client)
+            throws GeneralSecurityException, IOException {
+        OAuthTokenService oauthService = new OAuthTokenService(client);
+        return new PaymentService(bankInfoService, client, oauthService);
     }
 
     /**

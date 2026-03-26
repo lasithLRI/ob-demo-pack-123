@@ -73,7 +73,7 @@ public final class ApiController {
             );
 
             this.accountService = AccountService.create(bankInfoService, httpClient);
-            this.paymentService = new PaymentService(bankInfoService, httpClient);
+            this.paymentService = PaymentService.create(bankInfoService, httpClient);
             this.authService = new AuthService(accountService, paymentService);
 
         } catch (SSLContextCreationException | GeneralSecurityException | IOException e) {
