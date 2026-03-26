@@ -18,6 +18,8 @@
 
 package com.wso2.openbanking.demo.models;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.List;
 
 /** LoadPaymentPageResponse implementation */
@@ -26,6 +28,8 @@ public class LoadPaymentPageResponse {
     List<Payee> payees;
     List<String> currencies;
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Intentional - this is a response DTO and list references are safe to store directly")
     public LoadPaymentPageResponse(List<BankInfoInPayments> banks, List<Payee> payees, List<String> currencies) {
         this.banks = banks;
         this.payees = payees;
@@ -35,6 +39,8 @@ public class LoadPaymentPageResponse {
     /**
      * Executes the getBanks operation and modify the payload if necessary.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP",
+            justification = "Intentional - this is a response DTO and list references are safe to return directly")
     public List<BankInfoInPayments> getBanks() {
         return banks;
     }
@@ -44,6 +50,8 @@ public class LoadPaymentPageResponse {
      *
      * @param banks           The banks parameter
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Intentional - this is a response DTO and list references are safe to store directly")
     public void setBanks(List<BankInfoInPayments> banks) {
         this.banks = banks;
     }
@@ -51,6 +59,8 @@ public class LoadPaymentPageResponse {
     /**
      * Executes the getPayees operation and modify the payload if necessary.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP",
+            justification = "Intentional - this is a response DTO and list references are safe to return directly")
     public List<Payee> getPayees() {
         return payees;
     }
@@ -60,6 +70,8 @@ public class LoadPaymentPageResponse {
      *
      * @param payees          The payees parameter
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Intentional - this is a response DTO and list references are safe to store directly")
     public void setPayees(List<Payee> payees) {
         this.payees = payees;
     }
@@ -67,6 +79,8 @@ public class LoadPaymentPageResponse {
     /**
      * Executes the getCurrencies operation and modify the payload if necessary.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP",
+            justification = "Intentional - this is a response DTO and list references are safe to return directly")
     public List<String> getCurrencies() {
         return currencies;
     }
@@ -76,6 +90,8 @@ public class LoadPaymentPageResponse {
      *
      * @param currencies      The currencies parameter
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Intentional - this is a response DTO and list references are safe to store directly")
     public void setCurrencies(List<String> currencies) {
         this.currencies = currencies;
     }

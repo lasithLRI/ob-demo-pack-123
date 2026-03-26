@@ -19,10 +19,10 @@
 package com.wso2.openbanking.demo.http;
 
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
-import com.wso2.openbanking.demo.services.KeyReader;
+import com.wso2.openbanking.demo.service.KeyReader;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -39,7 +39,6 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 
 /** SSLContextFactory implementation */
 public class SSLContextFactory {
@@ -106,6 +105,8 @@ public class SSLContextFactory {
         }
     }
 
+    @SuppressFBWarnings(value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS",
+            justification = "Null return is intentional — callers check for null to detect missing truststore")
     private static TrustManager[] createTrustManagers(String trustStorePath, String trustStorePassword)
             throws SSLContextCreationException {
         

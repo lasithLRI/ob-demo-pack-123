@@ -45,7 +45,7 @@
 
     <filter>
         <filter-name>CorsFilter</filter-name>
-        <filter-class>com.wso2.openbanking.demo.ApplicationSecurity.CorsFilter</filter-class>
+        <filter-class>com.wso2.openbanking.demo.security.CorsFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CorsFilter</filter-name>

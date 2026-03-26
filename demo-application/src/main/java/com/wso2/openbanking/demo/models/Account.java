@@ -19,7 +19,9 @@
 package com.wso2.openbanking.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Account implementation */
@@ -37,19 +39,23 @@ public class Account {
     public Account() {
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Internal service mutates these lists directly; exposure is intentional within the package")
     public Account(String id, String name, Double balance, List<Transaction> transactions) {
         this.id = id;
         this.name = name;
         this.balance = balance;
-        this.transactions = transactions;
+        this.transactions = transactions != null ? new ArrayList<>(transactions) : null;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Internal service mutates these lists directly; exposure is intentional within the package")
     public Account(String id, String name, Double balance, List<Transaction> transactions, List<StandingOrder> standingOrders) {
         this.id = id;
         this.name = name;
         this.balance = balance;
-        this.transactions = transactions;
-        this.standingOrders = standingOrders;
+        this.transactions = transactions != null ? new ArrayList<>(transactions) : null;
+        this.standingOrders = standingOrders != null ? new ArrayList<>(standingOrders) : null;
     }
 
     /**
@@ -88,24 +94,38 @@ public class Account {
     /**
      * Executes the getTransactions operation and modify the payload if necessary.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP",
+            justification = "Internal service mutates these lists directly; exposure is intentional within the package")
     public List<Transaction> getTransactions() { return transactions; }
+
     /**
      * Executes the setTransactions operation and modify the payload if necessary.
      *
      * @param transactions    The transactions parameter
      */
-    public void setTransactions(List<Transaction> transactions) { this.transactions = transactions; }
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Internal service mutates these lists directly; exposure is intentional within the package")
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 
     /**
      * Executes the getStandingOrders operation and modify the payload if necessary.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP",
+            justification = "Internal service mutates these lists directly; exposure is intentional within the package")
     public List<StandingOrder> getStandingOrders() { return standingOrders; }
+
     /**
      * Executes the setStandingOrders operation and modify the payload if necessary.
      *
      * @param standingOrders  The standingOrders parameter
      */
-    public void setStandingOrders(List<StandingOrder> standingOrders) { this.standingOrders = standingOrders; }
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Internal service mutates these lists directly; exposure is intentional within the package")
+    public void setStandingOrders(List<StandingOrder> standingOrders) {
+        this.standingOrders = standingOrders;
+    }
 
     /**
      * Executes the getBank operation and modify the payload if necessary.

@@ -21,6 +21,7 @@ package com.wso2.openbanking.demo.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.ArrayList;
 import java.util.Currency;
@@ -47,6 +48,8 @@ public class Bank {
     public Bank() {
     }
 
+    @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
+            justification = "addAccount is called intentionally in constructor; Bank is not designed for subclassing")
     public Bank(String name, String image, String color, String border, List<Account> accounts) {
         this.name = name;
         this.image = image;

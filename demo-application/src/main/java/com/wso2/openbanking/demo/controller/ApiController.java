@@ -21,42 +21,66 @@ package com.wso2.openbanking.demo.controller;
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
-import com.wso2.openbanking.demo.models.*;
-import com.wso2.openbanking.demo.services.*;
+import com.wso2.openbanking.demo.models.Account;
+import com.wso2.openbanking.demo.models.Bank;
+import com.wso2.openbanking.demo.models.ConfigResponse;
+import com.wso2.openbanking.demo.models.LoadPaymentPageResponse;
+import com.wso2.openbanking.demo.models.Payment;
+import com.wso2.openbanking.demo.service.AccountService;
+import com.wso2.openbanking.demo.service.AuthService;
+import com.wso2.openbanking.demo.service.serviceIMPLs.BankInfoService;
+import com.wso2.openbanking.demo.service.serviceIMPLs.HttpTlsClient;
+import com.wso2.openbanking.demo.service.PaymentService;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.HtmlResponseBuilder;
 import org.json.JSONArray;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.*;
 
-/** ApiController implementation */
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import static org.reflections.Reflections.log;
+
+/** ApiController implementation. */
 @Path("")
-public class ApiController {
+public final class ApiController {
 
     private final BankInfoService bankInfoService;
     private final AccountService accountService;
     private final AuthService authService;
     private final PaymentService paymentService;
 
-    public ApiController() throws Exception {
+    public ApiController() throws BankInfoLoadException {
 
         this.bankInfoService = new BankInfoService();
 
-        HttpTlsClient httpClient = new HttpTlsClient(
-                ConfigLoader.getCertificatePath(),
-                ConfigLoader.getKeyPath(),
-                ConfigLoader.getTruststorePath(),
-                ConfigLoader.getTruststorePassword()
-        );
+        try {
+            HttpTlsClient httpClient = new HttpTlsClient(
+                    ConfigLoader.getCertificatePath(),
+                    ConfigLoader.getKeyPath(),
+                    ConfigLoader.getTruststorePath(),
+                    ConfigLoader.getTruststorePassword()
+            );
 
-        this.accountService = new AccountService(bankInfoService, httpClient);
-        this.paymentService=new PaymentService(bankInfoService,httpClient);
-        this.authService = new AuthService(accountService, paymentService);
+            this.accountService = AccountService.create(bankInfoService, httpClient);
+            this.paymentService = new PaymentService(bankInfoService, httpClient);
+            this.authService = new AuthService(accountService, paymentService);
+
+        } catch (SSLContextCreationException | GeneralSecurityException | IOException e) {
+            throw new BankInfoLoadException("Failed to initialize API controller: " + e.getMessage(), e);
+        }
     }
+
 
     /**
      * Executes the getData operation and modify the payload if necessary.
@@ -80,7 +104,6 @@ public class ApiController {
             ConfigResponse config = bankInfoService.getConfigurations();
             return Response.ok(config).build();
         } catch (BankInfoLoadException e) {
-            e.printStackTrace();
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
@@ -117,7 +140,6 @@ public class ApiController {
     /**
      * Executes the selectAccountToAdd operation and modify the payload if necessary.
      *
-     * @param Map<String      The Map<String parameter
      * @param requestBody     The requestBody parameter
      * @throws Exception      When an error occurs during the operation
      */
@@ -227,35 +249,46 @@ public class ApiController {
     public Response getDeleteAccountInfo() {
         try {
             List<Map<String, Object>> groups = new ArrayList<>();
-            if (bankInfoService.getBanks() != null) {
-                
-                Map<String, List<Account>> byConsent = new LinkedHashMap<>();
-                for (Bank bank : bankInfoService.getBanks()) {
-                    for (Account acc : bank.getAccounts()) {
-                        byConsent
-                                .computeIfAbsent(acc.getConsentId(), k -> new ArrayList<>())
-                                .add(acc);
-                    }
-                }
-                for (Map.Entry<String, List<Account>> entry : byConsent.entrySet()) {
-                    Map<String, Object> group = new LinkedHashMap<>();
-                    group.put("consentId", entry.getKey());
-                    group.put("bankName", entry.getValue().get(0).getBank());
-                    List<Map<String, String>> accounts = new ArrayList<>();
-                    for (Account acc : entry.getValue()) {
-                        Map<String, String> a = new LinkedHashMap<>();
-                        a.put("id", acc.getId());
-                        a.put("name", acc.getName());
-                        accounts.add(a);
-                    }
-                    group.put("accounts", accounts);
-                    groups.add(group);
+            List<Bank> banks = Optional.ofNullable(bankInfoService.getBanks())
+                    .orElse(Collections.emptyList());
+
+            Map<String, List<Account>> byConsent = new LinkedHashMap<>();
+            for (Bank bank : banks) {
+                if (bank == null) continue;
+                List<Account> accounts = Optional.ofNullable(bank.getAccounts())
+                        .orElse(Collections.emptyList());
+                for (Account acc : accounts) {
+                    if (acc == null || acc.getConsentId() == null) continue;
+                    byConsent.computeIfAbsent(acc.getConsentId(), k -> new ArrayList<>())
+                            .add(acc);
                 }
             }
+
+            for (Map.Entry<String, List<Account>> entry : byConsent.entrySet()) {
+                List<Account> consentAccounts = entry.getValue();
+                if (consentAccounts.isEmpty()) continue;
+
+                Map<String, Object> group = new LinkedHashMap<>();
+                group.put("consentId", entry.getKey());
+                group.put("bankName", consentAccounts.get(0).getBank());
+
+                List<Map<String, String>> accountList = new ArrayList<>();
+                for (Account acc : consentAccounts) {
+                    Map<String, String> a = new LinkedHashMap<>();
+                    a.put("id", acc.getId());
+                    a.put("name", acc.getName());
+                    accountList.add(a);
+                }
+                group.put("accounts", accountList);
+                groups.add(group);
+            }
+
             return Response.ok(new JSONArray(groups).toString()).build();
-        } catch (Exception e) {
+
+        } catch (IllegalStateException e) {
+            log.error("Failed to build delete account info response", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                    .entity("{\"error\":\"Unable to retrieve account information\"}")
                     .build();
         }
     }
