@@ -74,7 +74,7 @@ public final class ApiController {
 
             this.accountService = AccountService.create(bankInfoService, httpClient);
             this.paymentService = PaymentService.create(bankInfoService, httpClient);
-            this.authService = new AuthService(accountService, paymentService);
+            this.authService = AuthService.create(accountService, paymentService);
 
         } catch (SSLContextCreationException | GeneralSecurityException | IOException e) {
             throw new BankInfoLoadException("Failed to initialize API controller: " + e.getMessage(), e);

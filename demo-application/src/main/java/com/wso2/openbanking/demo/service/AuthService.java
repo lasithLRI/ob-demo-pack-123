@@ -30,23 +30,31 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /** AuthService implementation */
-public class AuthService {
+public final class AuthService {
 
     private final AccountService accountService;
     private final PaymentService paymentService;
     private final HttpTlsClient client;
     private String requestStatus = "accounts";
 
-    public AuthService(AccountService accountService, PaymentService paymentService)
-            throws SSLContextCreationException {
+    private AuthService(AccountService accountService,
+                        PaymentService paymentService,
+                        HttpTlsClient client) {
         this.accountService = accountService;
         this.paymentService = paymentService;
-        this.client = new HttpTlsClient(
+        this.client = client;
+    }
+
+    public static AuthService create(AccountService accountService,
+                                     PaymentService paymentService)
+            throws SSLContextCreationException {
+        HttpTlsClient client = new HttpTlsClient(
                 ConfigLoader.getCertificatePath(),
                 ConfigLoader.getKeyPath(),
                 ConfigLoader.getTruststorePath(),
                 ConfigLoader.getTruststorePassword()
         );
+        return new AuthService(accountService, paymentService, client);
     }
 
     /**
