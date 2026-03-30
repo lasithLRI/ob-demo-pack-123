@@ -26,16 +26,24 @@ import com.wso2.openbanking.demo.models.Bank;
 import com.wso2.openbanking.demo.models.ConfigResponse;
 import com.wso2.openbanking.demo.models.LoadPaymentPageResponse;
 import com.wso2.openbanking.demo.models.Payment;
-import com.wso2.openbanking.demo.service.*;
+import com.wso2.openbanking.demo.service.AccountService;
+import com.wso2.openbanking.demo.service.AuthService;
 import com.wso2.openbanking.demo.service.BankInfoService;
 import com.wso2.openbanking.demo.service.HttpTlsClient;
+import com.wso2.openbanking.demo.service.PaymentService;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.HtmlResponseBuilder;
 import org.json.JSONArray;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -149,8 +157,6 @@ public final class ApiController {
         String redirectUrl = accountService.processAddAccount(requestBody.get("bankName"));
         authService.setRequestStatus("accounts");
 
-        System.out.println("================================================+");
-
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
@@ -199,7 +205,7 @@ public final class ApiController {
     /**
      * Executes the processAuth operation and modify the payload if necessary.
      *
-     * @param @QueryParam("code" The @QueryParam("code" parameter
+     * @param code The authorization code returned from the OAuth callback
      */
     @GET
     @Path("/processAuth")
@@ -252,11 +258,15 @@ public final class ApiController {
 
             Map<String, List<Account>> byConsent = new LinkedHashMap<>();
             for (Bank bank : banks) {
-                if (bank == null) continue;
+                if (bank == null) {
+                    continue;
+                }
                 List<Account> accounts = Optional.ofNullable(bank.getAccounts())
                         .orElse(Collections.emptyList());
                 for (Account acc : accounts) {
-                    if (acc == null || acc.getConsentId() == null) continue;
+                    if (acc == null || acc.getConsentId() == null) {
+                        continue;
+                    }
                     byConsent.computeIfAbsent(acc.getConsentId(), k -> new ArrayList<>())
                             .add(acc);
                 }
@@ -264,7 +274,9 @@ public final class ApiController {
 
             for (Map.Entry<String, List<Account>> entry : byConsent.entrySet()) {
                 List<Account> consentAccounts = entry.getValue();
-                if (consentAccounts.isEmpty()) continue;
+                if (consentAccounts.isEmpty()) {
+                    continue;
+                }
 
                 Map<String, Object> group = new LinkedHashMap<>();
                 group.put("consentId", entry.getKey());

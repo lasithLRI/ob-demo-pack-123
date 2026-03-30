@@ -40,7 +40,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
-/** SSLContextFactory implementation */
+/** SSLContextFactory implementation. */
 public class SSLContextFactory {
 
     public static SSLContext create(String certPath, String keyPath,

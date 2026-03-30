@@ -18,7 +18,7 @@
 
 package com.wso2.openbanking.demo.exceptions;
 
-/** AuthorizationException implementation */
+/** AuthorizationException implementation. */
 public class AuthorizationException extends Exception {
 
     public AuthorizationException(String message) {

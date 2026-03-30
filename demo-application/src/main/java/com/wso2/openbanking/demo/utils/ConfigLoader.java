@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/** ConfigLoader implementation */
+/** ConfigLoader implementation. */
 public class ConfigLoader {
 
     private static final Properties prop = new Properties();
@@ -227,6 +227,7 @@ public class ConfigLoader {
      * Executes the getMockBankSecondaryColor operation and modify the payload if necessary.
      */
     public static String getMockBankSecondaryColor() {
+
         return getProperty("mock.bank.color.secondary");
     }
 
@@ -234,13 +235,14 @@ public class ConfigLoader {
      * Executes the getCorsAllowedOrigin operation and modify the payload if necessary.
      */
     public static String getCorsAllowedOrigin() {
+
         return getProperty("cors.allowed.origin");
     }
 
     /**
      * Executes the getIsBaseUrl operation and modify the payload if necessary.
      */
-    public static String getIsBaseUrl(){
+    public static String getIsBaseUrl() {
         return getProperty("is.base.url");
     }
 }

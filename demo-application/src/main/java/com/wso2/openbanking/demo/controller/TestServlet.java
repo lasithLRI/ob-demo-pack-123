@@ -18,12 +18,13 @@
 
 package com.wso2.openbanking.demo.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-/** TestServlet implementation */
+/** TestServlet implementation. */
 public class TestServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

@@ -18,14 +18,11 @@
 
 package com.wso2.openbanking.demo.models;
 
-/** Payee implementation */
+/** Payee implementation. */
 public class Payee {
     String name;
     String bank;
     String accountNumber;
-
-    public Payee() {
-    }
 
     /**
      * Executes the getName operation and modify the payload if necessary.

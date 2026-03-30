@@ -20,7 +20,7 @@ package com.wso2.openbanking.demo.models;
 
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 
-/** AddAccountBankInfo implementation */
+/** AddAccountBankInfo implementation. */
 public class AddAccountBankInfo {
     String name;
     String image;
@@ -29,7 +29,7 @@ public class AddAccountBankInfo {
     public AddAccountBankInfo(String name, String image) {
         this.name = name;
         this.image = image;
-        if (name.equalsIgnoreCase(ConfigLoader.getMockBankName())){
+        if (name.equalsIgnoreCase(ConfigLoader.getMockBankName())) {
             flag = true;
         }
     }
@@ -38,6 +38,7 @@ public class AddAccountBankInfo {
      * Executes the getName operation and modify the payload if necessary.
      */
     public String getName() {
+
         return name;
     }
 
@@ -47,6 +48,7 @@ public class AddAccountBankInfo {
      * @param name            The name parameter
      */
     public void setName(String name) {
+
         this.name = name;
     }
 
@@ -54,6 +56,7 @@ public class AddAccountBankInfo {
      * Executes the getImage operation and modify the payload if necessary.
      */
     public String getImage() {
+
         return image;
     }
 
@@ -61,6 +64,7 @@ public class AddAccountBankInfo {
      * Executes the isFlag operation and modify the payload if necessary.
      */
     public boolean isFlag() {
+
         return flag;
     }
 }

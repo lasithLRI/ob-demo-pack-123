@@ -18,7 +18,7 @@
 
 package com.wso2.openbanking.demo.models;
 
-/** BankInfoInPayments implementation */
+/** BankInfoInPayments implementation. */
 public class BankInfoInPayments {
     String name;
     String accountNumber;

@@ -21,7 +21,7 @@ package com.wso2.openbanking.demo.models;
 import java.util.ArrayList;
 import java.util.List;
 
-/** ConfigResponse implementation */
+/** ConfigResponse implementation. */
 public class ConfigResponse {
     private final List<Bank> banks;
     private final List<Payee> payees;

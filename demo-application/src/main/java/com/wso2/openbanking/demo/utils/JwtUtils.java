@@ -21,7 +21,7 @@ package com.wso2.openbanking.demo.utils;
 import java.math.BigInteger;
 import java.util.UUID;
 
-/** JwtUtils implementation */
+/** JwtUtils implementation. */
 public class JwtUtils {
 
     /**

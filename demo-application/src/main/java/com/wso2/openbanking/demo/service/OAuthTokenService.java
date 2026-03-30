@@ -28,7 +28,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-/** OAuthTokenService implementation */
+/** OAuthTokenService implementation. */
 public final class OAuthTokenService {
 
     private final HttpTlsClient client;

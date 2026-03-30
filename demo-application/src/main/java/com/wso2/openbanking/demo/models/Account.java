@@ -24,7 +24,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Account implementation */
+/** Account implementation. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
     private String id;
@@ -50,7 +50,8 @@ public class Account {
 
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
             justification = "Internal service mutates these lists directly; exposure is intentional within the package")
-    public Account(String id, String name, Double balance, List<Transaction> transactions, List<StandingOrder> standingOrders) {
+    public Account(String id, String name, Double balance, List<Transaction> transactions,
+                   List<StandingOrder> standingOrders) {
         this.id = id;
         this.name = name;
         this.balance = balance;
@@ -61,42 +62,56 @@ public class Account {
     /**
      * Executes the getId operation and modify the payload if necessary.
      */
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
     /**
      * Executes the setId operation and modify the payload if necessary.
      *
      * @param id              The id parameter
      */
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Executes the getName operation and modify the payload if necessary.
      */
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
     /**
      * Executes the setName operation and modify the payload if necessary.
      *
      * @param name            The name parameter
      */
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Executes the getBalance operation and modify the payload if necessary.
      */
-    public Double getBalance() { return balance; }
+    public Double getBalance() {
+        return balance;
+    }
     /**
      * Executes the setBalance operation and modify the payload if necessary.
      *
      * @param balance         The balance parameter
      */
-    public void setBalance(Double balance) { this.balance = balance; }
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
 
     /**
      * Executes the getTransactions operation and modify the payload if necessary.
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP",
             justification = "Internal service mutates these lists directly; exposure is intentional within the package")
-    public List<Transaction> getTransactions() { return transactions; }
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
 
     /**
      * Executes the setTransactions operation and modify the payload if necessary.
@@ -114,7 +129,9 @@ public class Account {
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP",
             justification = "Internal service mutates these lists directly; exposure is intentional within the package")
-    public List<StandingOrder> getStandingOrders() { return standingOrders; }
+    public List<StandingOrder> getStandingOrders() {
+        return standingOrders;
+    }
 
     /**
      * Executes the setStandingOrders operation and modify the payload if necessary.
@@ -130,33 +147,45 @@ public class Account {
     /**
      * Executes the getBank operation and modify the payload if necessary.
      */
-    public String getBank() { return bank; }
+    public String getBank() {
+        return bank;
+    }
     /**
      * Executes the setBank operation and modify the payload if necessary.
      *
      * @param bank            The bank parameter
      */
-    public void setBank(String bank) { this.bank = bank; }
+    public void setBank(String bank) {
+        this.bank = bank;
+    }
 
     /**
      * Executes the getAccount operation and modify the payload if necessary.
      */
-    public String getAccount() { return account; }
+    public String getAccount() {
+        return account;
+    }
     /**
      * Executes the setAccount operation and modify the payload if necessary.
      *
      * @param account         The account parameter
      */
-    public void setAccount(String account) { this.account = account; }
+    public void setAccount(String account) {
+        this.account = account;
+    }
 
     /**
      * Executes the getConsentId operation and modify the payload if necessary.
      */
-    public String getConsentId() { return consentId; }
+    public String getConsentId() {
+        return consentId;
+    }
     /**
      * Executes the setConsentId operation and modify the payload if necessary.
      *
      * @param consentId       The consentId parameter
      */
-    public void setConsentId(String consentId) { this.consentId = consentId; }
+    public void setConsentId(String consentId) {
+        this.consentId = consentId;
+    }
 }

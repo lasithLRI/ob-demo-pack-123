@@ -18,7 +18,7 @@
 
 package com.wso2.openbanking.demo.exceptions;
 
-/** PaymentException implementation */
+/** PaymentException implementation. */
 public class PaymentException extends Exception {
 
     public PaymentException(String message) {

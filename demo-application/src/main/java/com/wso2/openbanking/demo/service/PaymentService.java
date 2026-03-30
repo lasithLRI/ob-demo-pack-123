@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-/** PaymentService implementation */
+/** PaymentService implementation. */
 public final class PaymentService {
 
     private static final DateTimeFormatter DATE_FORMATTER =
@@ -79,9 +79,9 @@ public final class PaymentService {
             String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payment-consents";
             String consentBody = createPaymentConsentBody(payment);
             String consentResponse = oauthService.initializePaymentConsent(token, consentBody, paymentUrl);
-            
+
             this.currentConsentId = new JSONObject(consentResponse).getJSONObject("Data").getString("ConsentId");
-            
+
             return oauthService.authorizeConsent(consentResponse, "payments openid");
         } catch (IOException e) {
             throw new AuthorizationException("Failed to contact payment consent endpoint", e);
@@ -103,9 +103,7 @@ public final class PaymentService {
         try {
             String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payments";
             String paymentBody = createPaymentSubmissionBody(currentPayment, currentConsentId);
-            String response = client.postPayments(paymentUrl, paymentBody, accessToken);
-            
-            System.out.println("Payment Submission Response: " + response);
+            client.postPayments(paymentUrl, paymentBody, accessToken); // ← removed unused variable
 
             String[] userAccount = parseAccountIdentifier(currentPayment.getUserAccount());
             String bankName = userAccount[0];
@@ -337,7 +335,9 @@ public final class PaymentService {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         StringBuilder numericId = new StringBuilder();
         for (char c : uuid.toCharArray()) {
-            if (numericId.length() >= length) break;
+            if (numericId.length() >= length) {
+                break;
+            }
             numericId.append(hexCharToDigit(c));
         }
         while (numericId.length() < length) {

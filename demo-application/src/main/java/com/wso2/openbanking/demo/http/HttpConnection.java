@@ -31,7 +31,7 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
-/** HttpConnection implementation */
+/** HttpConnection implementation. */
 public class HttpConnection {
 
     private final String url;
@@ -150,17 +150,8 @@ public class HttpConnection {
         if (body != null) {
             writeBody(connection);
         }
-        int status = connection.getResponseCode();
-        if (status >= 400) {
-            try {
-                System.out.println("========== HTTP ERROR RESPONSE BODY ==========");
-                System.out.println(readResponse(connection));
-                System.out.println("==============================================");
-            } catch (Exception e) {
-                System.out.println("Failed to read error body: " + e.getMessage());
-            }
-        }
-        return status;
+
+        return connection.getResponseCode();
     }
 
     /**

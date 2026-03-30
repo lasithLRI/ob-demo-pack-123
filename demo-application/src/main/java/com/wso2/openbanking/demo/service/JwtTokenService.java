@@ -33,7 +33,7 @@ import java.security.spec.PSSParameterSpec;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
-/** JwtTokenService implementation */
+/** JwtTokenService implementation. */
 public final class JwtTokenService {
 
     private static final String SIGNING_KEY_PATH      = "/obsigning.key";

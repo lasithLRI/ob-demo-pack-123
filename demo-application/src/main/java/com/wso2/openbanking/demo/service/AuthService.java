@@ -26,9 +26,10 @@ import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.JwtUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 
-/** AuthService implementation */
+/** AuthService implementation. */
 public final class AuthService {
 
     private final AccountService accountService;

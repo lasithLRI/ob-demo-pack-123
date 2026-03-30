@@ -18,7 +18,7 @@
 
 package com.wso2.openbanking.demo.exceptions;
 
-/** SSLContextCreationException implementation */
+/** SSLContextCreationException implementation. */
 public class SSLContextCreationException extends Exception {
 
     public SSLContextCreationException(String message) {

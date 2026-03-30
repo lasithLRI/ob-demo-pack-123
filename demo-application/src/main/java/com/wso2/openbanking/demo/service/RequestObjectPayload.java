@@ -21,7 +21,7 @@ package com.wso2.openbanking.demo.service;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** RequestObjectPayload implementation */
+/** RequestObjectPayload implementation. */
 public class RequestObjectPayload {
 
     private static final String FIELD_ESSENTIAL = "essential";
@@ -52,7 +52,7 @@ public class RequestObjectPayload {
         this.consentId = builder.consentId;
     }
 
-    /** Builder implementation */
+    /** Builder implementation. */
     public static class Builder {
 
         String iss;

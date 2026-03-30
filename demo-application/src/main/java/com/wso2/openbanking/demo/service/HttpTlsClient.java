@@ -26,11 +26,12 @@ import com.wso2.openbanking.demo.utils.ConfigLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.util.UUID;
 
-/** HttpTlsClient implementation */
+import javax.net.ssl.SSLContext;
+
+/** HttpTlsClient implementation. */
 public final class HttpTlsClient {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpTlsClient.class);

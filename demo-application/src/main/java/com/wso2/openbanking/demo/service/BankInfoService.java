@@ -21,7 +21,15 @@ package com.wso2.openbanking.demo.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
-import com.wso2.openbanking.demo.models.*;
+import com.wso2.openbanking.demo.models.Account;
+import com.wso2.openbanking.demo.models.AddAccountBankInfo;
+import com.wso2.openbanking.demo.models.Bank;
+import com.wso2.openbanking.demo.models.BankInfoInPayments;
+import com.wso2.openbanking.demo.models.ConfigResponse;
+import com.wso2.openbanking.demo.models.LoadPaymentPageResponse;
+import com.wso2.openbanking.demo.models.Payee;
+import com.wso2.openbanking.demo.models.StandingOrder;
+import com.wso2.openbanking.demo.models.Transaction;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 
 import java.io.IOException;
@@ -29,10 +37,18 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-/** BankInfoService implementation */
+/** BankInfoService implementation. */
 public final class BankInfoService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -95,7 +111,9 @@ public final class BankInfoService {
     private void convertDateOffsets() {
         LocalDate today = LocalDate.now();
         for (Bank bank : this.banks) {
-            if (bank.getAccounts() == null) continue;
+            if (bank.getAccounts() == null) {
+                continue;
+            }
             for (Account account : bank.getAccounts()) {
                 convertTransactionDates(account, today);
                 convertStandingOrderDates(account, today);
@@ -110,15 +128,19 @@ public final class BankInfoService {
      * @param today           The today parameter
      */
     private void convertTransactionDates(Account account, LocalDate today) {
-        if (account.getTransactions() == null) return;
+        if (account.getTransactions() == null) {
+            return;
+        }
         for (Transaction transaction : account.getTransactions()) {
             String dateValue = transaction.getDate();
-            if (dateValue == null) continue;
+            if (dateValue == null) {
+                continue;
+            }
             try {
                 int daysAgo = Integer.parseInt(dateValue);
                 transaction.setDate(today.minusDays(daysAgo).format(DATE_FORMATTER));
             } catch (NumberFormatException e) {
-                
+
             }
         }
     }
@@ -130,15 +152,19 @@ public final class BankInfoService {
      * @param today           The today parameter
      */
     private void convertStandingOrderDates(Account account, LocalDate today) {
-        if (account.getStandingOrders() == null) return;
+        if (account.getStandingOrders() == null) {
+            return;
+        }
         for (StandingOrder order : account.getStandingOrders()) {
             String nextDateValue = order.getNextDate();
-            if (nextDateValue == null) continue;
+            if (nextDateValue == null) {
+                continue;
+            }
             try {
                 int daysFromNow = Integer.parseInt(nextDateValue);
                 order.setNextDate(today.plusDays(daysFromNow).format(DATE_FORMATTER));
             } catch (NumberFormatException e) {
-                
+
             }
         }
     }
@@ -148,7 +174,9 @@ public final class BankInfoService {
      */
     private void sortTransactionsByDate() {
         for (Bank bank : this.banks) {
-            if (bank.getAccounts() == null) continue;
+            if (bank.getAccounts() == null) {
+                continue;
+            }
             for (Account account : bank.getAccounts()) {
                 if (account.getTransactions() != null && !account.getTransactions().isEmpty()) {
                     account.getTransactions().sort(byDateDescending());
@@ -195,7 +223,7 @@ public final class BankInfoService {
                 this.addAccountBankInfo = new AddAccountBankInfo(mockBankName, mockBankLogo);
             }
         } catch (IllegalStateException e) {
-            
+
         }
     }
 
@@ -222,11 +250,17 @@ public final class BankInfoService {
      */
     private List<Transaction> collectEnrichedTransactions() {
         List<Transaction> result = new ArrayList<>();
-        if (this.banks == null) return result;
+        if (this.banks == null) {
+            return result;
+        }
         for (Bank bank : this.banks) {
-            if (bank.getAccounts() == null) continue;
+            if (bank.getAccounts() == null) {
+                continue;
+            }
             for (Account account : bank.getAccounts()) {
-                if (account.getTransactions() == null) continue;
+                if (account.getTransactions() == null) {
+                    continue;
+                }
                 for (Transaction transaction : account.getTransactions()) {
                     Transaction enriched = getTransaction(bank, account, transaction);
                     result.add(enriched);
@@ -261,11 +295,17 @@ public final class BankInfoService {
      */
     private List<StandingOrder> collectEnrichedStandingOrders() {
         List<StandingOrder> result = new ArrayList<>();
-        if (this.banks == null) return result;
+        if (this.banks == null) {
+            return result;
+        }
         for (Bank bank : this.banks) {
-            if (bank.getAccounts() == null) continue;
+            if (bank.getAccounts() == null) {
+                continue;
+            }
             for (Account account : bank.getAccounts()) {
-                if (account.getStandingOrders() == null) continue;
+                if (account.getStandingOrders() == null) {
+                    continue;
+                }
                 for (StandingOrder order : account.getStandingOrders()) {
                     StandingOrder enriched = new StandingOrder();
                     enriched.setId(order.getId());
@@ -323,7 +363,7 @@ public final class BankInfoService {
                 return LocalDate.parse(t2.getDate(), DATE_FORMATTER)
                         .compareTo(LocalDate.parse(t1.getDate(), DATE_FORMATTER));
             } catch (DateTimeParseException e) {
-                
+
                 return 0;
             }
         };
@@ -338,7 +378,7 @@ public final class BankInfoService {
                 return LocalDate.parse(o1.getNextDate(), DATE_FORMATTER)
                         .compareTo(LocalDate.parse(o2.getNextDate(), DATE_FORMATTER));
             } catch (DateTimeParseException e) {
-                
+
                 return 0;
             }
         };
@@ -351,7 +391,9 @@ public final class BankInfoService {
         return banks == null ? null : new ArrayList<>(banks);
     }
 
-    public void addBank(Bank bank) { this.banks.add(bank); }
+    public void addBank(Bank bank) {
+        this.banks.add(bank);
+    }
 
     public boolean isBankExists(String bankName) {
         return this.banks.stream().anyMatch(bank -> bankName.equals(bank.getName()));
@@ -376,20 +418,27 @@ public final class BankInfoService {
     }
 
     public List<Map<String, Object>> getAccountsGroupedByConsent() {
-        if (this.banks == null) return Collections.emptyList();
+        if (this.banks == null) {
+            return Collections.emptyList();
+        }
         Map<String, Map<String, Object>> consentGroupMap = new LinkedHashMap<>();
         for (Bank bank : this.banks) {
-            if (bank.getAccounts() == null) continue;
+            if (bank.getAccounts() == null) {
+                continue;
+            }
             for (Account account : bank.getAccounts()) {
                 String consentId = account.getConsentId();
-                if (consentId == null || consentId.isEmpty()) continue;
+                if (consentId == null || consentId.isEmpty()) {
+                    continue;
+                }
                 consentGroupMap.putIfAbsent(consentId, new HashMap<>());
                 Map<String, Object> group = consentGroupMap.get(consentId);
                 group.putIfAbsent("consentId", consentId);
                 group.putIfAbsent("bankName", bank.getName());
-                
+
                 @SuppressWarnings("unchecked")
-                List<Map<String, String>> accountsList = (List<Map<String, String>>) group.computeIfAbsent("accounts", k -> new ArrayList<>());
+                List<Map<String, String>> accountsList =
+                        (List<Map<String, String>>) group.computeIfAbsent("accounts", k -> new ArrayList<>());
                 Map<String, String> accountInfo = new HashMap<>();
                 accountInfo.put("id", account.getId());
                 accountInfo.put("name", account.getName());
@@ -405,7 +454,9 @@ public final class BankInfoService {
      * @param consentId       The consentId parameter
      */
     public void deleteAccountsByConsentId(String consentId) {
-        if (this.banks == null) return;
+        if (this.banks == null) {
+            return;
+        }
         for (Bank bank : this.banks) {
             if (bank.getAccounts() != null) {
                 bank.getAccounts().removeIf(account -> consentId.equals(account.getConsentId()));

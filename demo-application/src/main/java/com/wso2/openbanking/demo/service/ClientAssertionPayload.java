@@ -20,7 +20,7 @@ package com.wso2.openbanking.demo.service;
 
 import org.json.JSONObject;
 
-/** ClientAssertionPayload implementation */
+/** ClientAssertionPayload implementation. */
 public class ClientAssertionPayload {
 
     private final String iss;

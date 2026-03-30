@@ -18,7 +18,7 @@
 
 package com.wso2.openbanking.demo.exceptions;
 
-/** BankInfoLoadException implementation */
+/** BankInfoLoadException implementation. */
 public class BankInfoLoadException extends Exception {
 
     public BankInfoLoadException(String message) {

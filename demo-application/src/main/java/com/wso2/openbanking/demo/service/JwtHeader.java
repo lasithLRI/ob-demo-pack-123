@@ -20,7 +20,7 @@ package com.wso2.openbanking.demo.service;
 
 import org.json.JSONObject;
 
-/** JwtHeader implementation */
+/** JwtHeader implementation. */
 public class JwtHeader {
 
     private final String alg;

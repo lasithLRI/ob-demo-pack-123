@@ -28,7 +28,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
-/** KeyReader implementation */
+/** KeyReader implementation. */
 public class KeyReader {
 
     public static PrivateKey loadPrivateKeyFromStream(InputStream in)

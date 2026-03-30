@@ -18,7 +18,7 @@
 
 package com.wso2.openbanking.demo.models;
 
-/** Payment implementation */
+/** Payment implementation. */
 public class Payment {
     private String userAccount;
     private String payeeAccount;

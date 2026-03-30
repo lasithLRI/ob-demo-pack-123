@@ -22,7 +22,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.List;
 
-/** LoadPaymentPageResponse implementation */
+/** LoadPaymentPageResponse implementation. */
 public class LoadPaymentPageResponse {
     List<BankInfoInPayments> banks;
     List<Payee> payees;

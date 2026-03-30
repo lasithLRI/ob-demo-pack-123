@@ -20,7 +20,7 @@ package com.wso2.openbanking.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/** StandingOrder implementation */
+/** StandingOrder implementation. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StandingOrder {
     private String id;

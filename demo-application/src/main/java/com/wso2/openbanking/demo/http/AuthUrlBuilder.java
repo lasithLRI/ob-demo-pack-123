@@ -22,7 +22,7 @@ import com.wso2.openbanking.demo.utils.ConfigLoader;
 
 import static org.apache.cxf.common.util.UrlUtils.urlEncode;
 
-/** AuthUrlBuilder implementation */
+/** AuthUrlBuilder implementation. */
 public class AuthUrlBuilder {
 
     /**

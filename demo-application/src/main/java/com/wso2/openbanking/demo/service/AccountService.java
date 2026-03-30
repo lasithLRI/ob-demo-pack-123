@@ -1,6 +1,19 @@
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
- * ...license header...
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.wso2.openbanking.demo.service;
@@ -18,10 +31,15 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-/** AccountService implementation */
+import static org.reflections.Reflections.log;
+
+/** AccountService implementation. */
 public final class AccountService {
 
     private final BankInfoService bankInfoService;
@@ -102,11 +120,8 @@ public final class AccountService {
         String token = oauthService.getToken("accounts openid");
         String consentResponse = oauthService.initializeConsent(token, consentBody, addAccountUrl);
         currentConsentId = new JSONObject(consentResponse).getJSONObject("Data").getString("ConsentId");
-        String redirectUrl = oauthService.authorizeConsent(consentResponse, "accounts openid");
-        System.out.println("========== REDIRECT URL ==========");
-        System.out.println(redirectUrl);
-        System.out.println("==================================");
-        return redirectUrl;
+
+        return oauthService.authorizeConsent(consentResponse, "accounts openid");
     }
 
     private Set<String> getExistingAccountIds(String bankName) {
@@ -268,31 +283,31 @@ public final class AccountService {
     }
 
     public boolean revokeAccountConsent(String accountId, String bankName) throws Exception {
-        System.out.println("[DELETE] Attempting to revoke consent for accountId: "
-                + accountId + ", bankName: " + bankName);
+        log.info("[DELETE] Attempting to revoke consent for accountId: {}, bankName: {}",
+                accountId, bankName);
         Bank bank = bankInfoService.getBanks().stream()
                 .filter(b -> b.getName().equals(bankName))
                 .findFirst()
                 .orElse(null);
         if (bank == null) {
-            System.out.println("[DELETE] Bank not found: " + bankName);
+            log.warn("[DELETE] Bank not found: {}", bankName);
             return false;
         }
         String consentId = bank.getConsentIdForAccount(accountId);
         if (consentId == null) {
-            System.out.println("[DELETE] No consentId found for accountId: " + accountId);
+            log.warn("[DELETE] No consentId found for accountId: {}", accountId);
             return false;
         }
-        System.out.println("[DELETE] Resolved consentId: " + consentId);
+        log.info("[DELETE] Resolved consentId: {}", consentId);
         String tokenResponse = oauthService.getToken("accounts openid");
         String token = new JSONObject(tokenResponse).getString("access_token");
         String revokeUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents/" + consentId;
-        System.out.println("[DELETE] Calling revoke URL: " + revokeUrl);
+        log.info("[DELETE] Calling revoke URL: {}", revokeUrl);
         boolean success = client.deleteWithAuth(revokeUrl, token);
-        System.out.println("[DELETE] OB backend revocation success: " + success);
+        log.info("[DELETE] OB backend revocation success: {}", success);
         if (success) {
             List<String> allAccountIds = bank.getAccountIdsByConsentId(consentId);
-            System.out.println("[DELETE] Removing accounts: " + allAccountIds);
+            log.info("[DELETE] Removing accounts: {}", allAccountIds);
             allAccountIds.forEach(bank::removeAccount);
             bank.removeConsent(consentId);
         }

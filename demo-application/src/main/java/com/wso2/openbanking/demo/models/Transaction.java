@@ -20,7 +20,7 @@ package com.wso2.openbanking.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/** Transaction implementation */
+/** Transaction implementation. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction {
     private String id;

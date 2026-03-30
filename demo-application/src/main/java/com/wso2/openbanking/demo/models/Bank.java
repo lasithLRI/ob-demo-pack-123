@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/** Bank implementation */
+/** Bank implementation. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Bank {
 
@@ -113,7 +113,9 @@ public class Bank {
      * @param accountId       The accountId parameter
      */
     public boolean removeAccount(String accountId) {
-        if (accounts == null) return false;
+        if (accounts == null) {
+            return false;
+        }
         return accounts.removeIf(a -> a.getId().equals(accountId));
     }
 
@@ -133,7 +135,9 @@ public class Bank {
     /**
      * Executes the getName operation and modify the payload if necessary.
      */
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     /**
      * Executes the setName operation and modify the payload if necessary.
@@ -148,19 +152,28 @@ public class Bank {
     /**
      * Executes the getImage operation and modify the payload if necessary.
      */
-    public String getImage() { return image; }
+    public String getImage() {
+        return image;
+    }
     /**
      * Executes the getColor operation and modify the payload if necessary.
      */
-    public String getColor() { return color; }
+    public String getColor() {
+        return color;
+    }
     /**
      * Executes the getBorder operation and modify the payload if necessary.
      */
-    public String getBorder() { return border; }
+    public String getBorder() {
+        return border;
+    }
+
     /**
      * Executes the getCurrency operation and modify the payload if necessary.
      */
-    public String getCurrency() { return currency; }
+    public String getCurrency() {
+        return currency;
+    }
 
     /**
      * Executes the setCurrency operation and modify the payload if necessary.
@@ -181,5 +194,7 @@ public class Bank {
     /**
      * Executes the getFlag operation and modify the payload if necessary.
      */
-    public boolean getFlag() { return this.flag; }
+    public boolean getFlag() {
+        return this.flag;
+    }
 }

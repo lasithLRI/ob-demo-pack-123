@@ -18,7 +18,7 @@
 
 package com.wso2.openbanking.demo.utils;
 
-/** HtmlResponseBuilder implementation */
+/** HtmlResponseBuilder implementation. */
 public class HtmlResponseBuilder {
 
     /**
@@ -74,7 +74,8 @@ public class HtmlResponseBuilder {
                 "            if (response.ok) {\n" +
                 "                window.location.href = '" + frontendHomeUrl + "';\n" +
                 "            } else {\n" +
-                "                document.getElementById('status').innerHTML = 'Processing failed. Please try again.';\n" +
+                "                document.getElementById('status').innerHTML = 'Processing failed. " +
+                "Please try again.';\n" +
                 "            }\n" +
                 "        })\n" +
                 "        .catch(() => {\n" +
